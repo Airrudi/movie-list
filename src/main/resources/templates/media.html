@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="ISO-8859-1"/>
+		<title th:text="${title}"></title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous"/>
+		<link rel="stylesheet" th:href="@{/style.css}" />
+	</head>
+	<body id="media" class="page">
+		<!-- TODO: Login  -->
+	
+		<h1 th:text="${title}"></h1>
+		
+		<div class="dropdown">
+  			<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Kies media type</button>
+			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			  <a th:each="type : ${types}" class="dropdown-item" th:href="${'/media/' + #strings.toLowerCase(type)} + '/'" th:text="${type}"></a>			
+			</div>
+		</div>	
+
+		
+		<!-- Show Movies OR Series OR Books -->
+		
+		<h3 th:if="${title == 'Media' OR title == 'Movies'}">Movies</h3>
+		<h3 th:if="${title == 'Media' OR title == 'Series'}">Series</h3>
+		<h3 th:if="${title == 'Media' OR title == 'Books'}">Books</h3>
+		
+		<a th:if="${title != 'Media'}" href="add" class="btn btn-success">Toevoegen</a>
+		<table class="table table-hover">
+		  <thead>
+		    <tr>
+		      <th>#</th>
+		      <th>First Name</th>
+		      <th>Last Name</th>
+		      <th>Username</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr>
+		      <th scope="row">1</th>
+		      <td>Mark</td>
+		      <td>Otto</td>
+		      <td>@mdo</td>
+		    </tr>
+		    <tr>
+		      <th scope="row">2</th>
+		      <td>Jacob</td>
+		      <td>Thornton</td>
+		      <td>@fat</td>
+		    </tr>
+		    <tr>
+		      <th scope="row">3</th>
+		      <td colspan="2">Larry the Bird</td>
+		      <td>@twitter</td>
+		    </tr>
+		  </tbody>
+		</table>
+		
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+	</body>
+</html>
