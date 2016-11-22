@@ -17,5 +17,8 @@ public class GenreService {
 	public List<Genre> getGenres(){
 		return genreDao.getGenres();
 	}
-
+	
+	public Genre getGenreByUuid(String uuid){
+		return genreDao.getGenreByUuid(uuid);
+	}
 }

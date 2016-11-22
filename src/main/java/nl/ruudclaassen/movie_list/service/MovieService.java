@@ -2,6 +2,8 @@ package nl.ruudclaassen.movie_list.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import nl.ruudclaassen.movie_list.model.Genre;
 import nl.ruudclaassen.movie_list.model.Movie;
 import nl.ruudclaassen.movie_list.model.User;
@@ -9,7 +11,7 @@ import nl.ruudclaassen.movie_list.model.User;
 public interface MovieService {
 	List<Movie> getMovies();
 	
-	Movie saveMovie(Movie movie);
+	Movie saveMovie(Movie movie, MultipartFile image);
 
 	Movie getMovieById(String uuid);
 

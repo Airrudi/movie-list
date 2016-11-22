@@ -3,7 +3,9 @@ package nl.ruudclaassen.movie_list.data;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +21,17 @@ public class GenreDaoImpl implements GenreDao{
 	@SuppressWarnings("unchecked")
 	public List<Genre> getGenres(){
 		return em.createQuery("SELECT g FROM Genre g").getResultList();
+	}
+
+	public Genre getGenreByUuid(String uuid) {
+		Query q = em.createQuery("SELECT g FROM Genre g WHERE uuid = :uuid");
+		q.setParameter("uuid", uuid);
+		
+		try {			
+			return (Genre) q.getSingleResult();	
+		} catch (NoResultException nre) {
+			return new Genre();
+		}	
 	}
 	
 }

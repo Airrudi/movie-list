@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import nl.ruudclaassen.movie_list.general.Constants;
 import nl.ruudclaassen.movie_list.model.Book;
@@ -49,9 +51,7 @@ public class MediaController {
 	
 	@RequestMapping("/media/movies/")
 	public String showMovies(Model model) {
-		LOGGER.info("bllaaaaaaaaaaaaaaaaaaaaaaaaa");
-		LOGGER.debug("debugggggggggggggggggggggggg");
-		System.out.print(types);
+		
 		model.addAttribute("title", "Movies");
 		model.addAttribute("types", types);
 		
@@ -59,8 +59,9 @@ public class MediaController {
 	}
 	
 	@RequestMapping(value = "/media/movies/", method = RequestMethod.POST)
-	public String addMovie(Movie movie, Model model) {
-		movieService.saveMovie(movie);
+	public String addMovie(Movie movie, @RequestParam MultipartFile image, Model model) {
+		
+		movieService.saveMovie(movie, image);
 		
 		return Constants.MEDIA;
 	}
