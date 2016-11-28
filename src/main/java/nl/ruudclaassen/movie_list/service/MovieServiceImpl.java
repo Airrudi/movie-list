@@ -1,12 +1,10 @@
 package nl.ruudclaassen.movie_list.service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import nl.ruudclaassen.movie_list.data.MovieDao;
 import nl.ruudclaassen.movie_list.model.Genre;
@@ -23,8 +21,8 @@ public class MovieServiceImpl implements MovieService{
 		return movieDao.getMovies();
 	}
 
-	public Movie getMovieById(String uuid) {
-		return movieDao.getMovieById(uuid);
+	public Movie getMovieByUUID(String uuid) {
+		return movieDao.getMovieByUUID(uuid);
 	}
 	
 	public Movie updateMovie(Movie movie) {				
@@ -39,17 +37,36 @@ public class MovieServiceImpl implements MovieService{
 		return movieDao.getMoviesPerGenre(genre);
 	}
 
-	// TODO: Q: Why @Override does not work?
-	public Movie saveMovie(Movie movie, MultipartFile image) {
-		movie.setUuid(UUID.randomUUID().toString());	
+	@Override
+	public Movie saveMovie(Movie movie, byte[] image) {
+		if(image.length > 0){
+			movie.setImage(image);
+		}
 		
-		try {
-			movie.setImage(image.getBytes());
-		} catch (IOException ioe) {
-			System.err.println("unable to get byte array from uploaded file");
-		}		
-		
-		return movieDao.saveMovie(movie);
+		if( "".equals(movie.getUuid()) ){
+			movie.setUuid(UUID.randomUUID().toString());			
+			return movieDao.saveMovie(movie);
+			
+		} else {
+			Movie existingMovie = this.getMovieByUUID(movie.getUuid());
+			
+			if(movie.getImage() != null){
+				existingMovie.setImage(movie.getImage());
+			}
+			existingMovie.setTitle(movie.getTitle());
+			existingMovie.setGenres(movie.getGenres());
+			existingMovie.setScore(movie.getScore());
+			existingMovie.setDuration(movie.getDuration());
+			existingMovie.setRelease(movie.getRelease());
+			existingMovie.setSummary(movie.getSummary());
+			
+			return movieDao.saveMovie(existingMovie);
+		}
+	}
+
+	@Override
+	public List<Movie> getFreshMoviesByUser(User user) {
+		return movieDao.getFreshMoviesByUser(user);
 	}
 
 }

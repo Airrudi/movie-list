@@ -1,4 +1,4 @@
-package nl.ruudclaassen.movie_list.formatters;
+package nl.ruudclaassen.movie_list.web.formatters;
 
 import java.text.ParseException;
 import java.util.Locale;

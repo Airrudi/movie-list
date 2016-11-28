@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1"/>
+<title>Home</title>
+<link rel="stylesheet" th:href="@{/style.css}" />
+<link rel="stylesheet" th:href="@{/swiper/css/jTinder.css}" />
+</head>
+<body id="swiper" class="page">
+	<!-- TODO: Login  -->
+
+	<h1>Swiper</h1>
+	
+	
+	<div id="swiperContainer">
+		<div id="tinderslide">
+		    <ul>
+	        	<li th:each="item : ${media}" class="item" th:attr="data-uuid=${item.uuid}">
+	        		<!-- TEMP, title will go away if images are used -->
+	        		<p th:text="${item.title}"></p>
+					<button type="button" class="watch topLayer" th:classappend="${user.todo.contains(item)} ? active">Add to Watch</button>
+					<button type="button" class="owned topLayer" th:classappend="${user.judgedMovies.get(item)} ? active">Add to Owned</button>							
+					<span class="image" th:style="'background-image:url(/image/' + ${item.uuid} + ');'"></span>
+	        	</li>	        
+		    </ul>
+		</div>
+	</div>
+	
+	
+	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+	
+	
+
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+	<script th:src="@{/swiper/js/jquery.transform2d.js}"></script>
+	<script th:src="@{/swiper/js/jquery.jTinder.js}"></script>	
+		
+	<script>
+		var username = window.location.pathname.split("/")[1];		
+	
+		$(function() {
+			// $("#tinderslide").jTinder();
+			
+			$("#tinderslide").jTinder({
+			    onDislike: function (item) {
+			    	judgeSeen(item, false);
+			    },
+			    onLike: function (item) {			    	
+			    	judgeSeen(item, true);
+			    },
+			    animationRevertSpeed: 200,
+			    animationSpeed: 400,
+			    threshold: 1,
+			    likeSelector: '.like',
+			    dislikeSelector: '.dislike'
+			});
+			
+			
+			
+		 	$("body").on("click", ".watch, .owned", function(){
+				if( $(this).hasClass("active") ){
+					$(this).removeClass("active");					
+				} else {					
+					$(this).addClass("active");
+				}				
+			});
+			
+			
+		});
+		
+		
+		function judgeSeen(item, seen){
+			
+			var mediaId = item.data("uuid");
+			var owned = $(".active .owned").hasClass("active");
+			var watchList = $(".active .watch").hasClass("active");
+			var url = "/" + username + "/media/" + mediaId;
+			
+			var postData = {
+					"_csrf": $("input[name='_csrf']").val(),
+					//"judgeResults": {
+						"seen": seen,
+						"owned": owned,
+						"watchList": watchList
+					//}
+			}
+			
+			
+			console.log(url);
+			console.log(postData);
+			
+			//data = JSON.stringify(data);
+			
+			// Ajax call to		
+			$.post( url, postData).done(function( responseData ) {
+				console.log( "Data Loaded: " + responseData );
+			});
+			  
+			  $("#csrfForm").submit();
+			
+			//nextItem();
+		}	
+		
+		// TODO: clicking for more info (but not when dragging)
+		function showInfo(){
+			alert("info is shown");
+		}
+
+	</script>
+	
+</body>
+</html>

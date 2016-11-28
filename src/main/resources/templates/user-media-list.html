@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="ISO-8859-1"/>
+		<title th:text="${title}"></title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous"/>
+		<link rel="stylesheet" th:href="@{/style.css}" />
+	</head>
+	<body id="media" class="page">
+		<a href="/">Home</a>
+		<a th:href="${'/' + username + '/swiper/'}">swiper</a>
+		
+		<form class="logout inline" th:action="@{/logout/}" method="post">
+             <button class="button logout" type="submit">Log out</button>
+        </form>
+	
+		<!-- TODO: Login  -->
+	
+		<h1 th:text="${title}"></h1>
+		
+		<h3 th:inline="text">Seen ([[${itemsSeen.size()}]])</h3>
+		<div class="blockContainer">
+			<div class="mediaBlock" th:each="item : ${itemsSeen}">
+				<span class="image cover" th:style="'background-image:url(/image/' + ${item.uuid} + ');'"></span>
+			</div>
+		</div>
+		
+		<!-- TODO: Items you have not seen and don't want to see? -->
+		
+		<h3 th:inline="text">Not Seen ([[${itemsToSee.size()}]])</h3>
+		<div class="blockContainer">
+			<div class="mediaBlock" th:each="item : ${itemsToSee}">
+				<span class="image cover" th:style="'background-image:url(/image/' + ${item.uuid} + ');'"></span>
+			</div>
+		</div>
+	
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+	</body>
+</html>

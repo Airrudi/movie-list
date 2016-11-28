@@ -1,5 +1,7 @@
+@CHARSET "ISO-8859-1";
 
 body{
+	position:relative;
 	padding:50px 0;
 	width: 60%;
     margin: 0 auto;
@@ -9,3 +11,39 @@ h1{
 	font-size:1.5rem;
 	margin-bottom:20px;
 }
+
+.btn{margin:20px 0;}
+
+.cover{display:block; height:100%; width:100%; background-repeat:no-repeat; background-position:center center; background-size:cover;}
+
+#swiperContainer{
+	width:67%;
+	height:80%;	
+	margin:0 auto;
+}
+
+.button{border: none; transition:.2s; cursor:pointer;}
+.button:hover{opacity:.7;}
+
+.logout{position: absolute;
+    right: 0;
+    top: 20px;
+    width: 85px;
+    
+    background-color: #000;
+    border-radius: 3px;
+    line-height: 40px;
+    color: #fff;}
+
+.blockContainer{display:flex; flex-wrap:wrap; justify-content:flex-start; margin-left:-10px; margin-bottom:40px;}
+.blockContainer .mediaBlock{height:200px; width:130px; border-radius:5px; margin: 10px; box-sizing: border-box; overflow:hidden;}
+
+#mediaContainer .item{display:none; pointer-events: none}
+#mediaContainer .item.active{display:block;}
+
+.item .watch, .item .owned{background-color:red;}
+.item .watch.active, .item .owned.active{background-color:green;} 
+.item .image{display: block; height: 100%; width: 100%; position: absolute; top: 0; background-size: cover;}
+
+.topLayer{position:relative; z-index:50;}
+

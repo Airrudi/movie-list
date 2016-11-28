@@ -1,7 +1,8 @@
 package nl.ruudclaassen.movie_list.model;
 
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -15,8 +16,13 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -33,11 +39,12 @@ public abstract class Media {
 	@NotNull
 	private String title;
 	
-	@OneToMany 
-	private Set<Genre> genres = new HashSet<Genre>();
+	@ManyToMany
+	private Set<Genre> genres;
 	
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
+	@NotNull
 	private byte[] image;
 	
 	
@@ -62,7 +69,7 @@ public abstract class Media {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
-	}
+	}	
 
 	public String getTitle() {
 		return title;
@@ -111,8 +118,47 @@ public abstract class Media {
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
-
 	
+	// TODO: Might as well directly join to string instead of to list first..
+	private List<String> getGenreNames(){
+		List<String> genreNames = new ArrayList<>();
+		Set<Genre> genres = this.getGenres();
+		
+		for(Genre genre : genres){
+			genreNames.add(genre.getName());
+		}
+		
+		return genreNames;
+	}
+	
+	public String getGenresAsString(){
+		return String.join(", ", this.getGenreNames());		
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Media other = (Media) obj;
+		if (uuid == null) {
+			if (other.uuid != null)
+				return false;
+		} else if (!uuid.equals(other.uuid))
+			return false;
+		return true;
+	}	
 	
 	
 	

@@ -11,7 +11,7 @@
 	
 		<h1 th:text="${title}"></h1>
 		
-		<div class="dropdown">
+		<div th:if="${title == 'Media'}" class="dropdown">
   			<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Kies media type</button>
 			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 			  <a th:each="type : ${types}" class="dropdown-item" th:href="${'/media/' + #strings.toLowerCase(type)} + '/'" th:text="${type}"></a>			
@@ -26,35 +26,32 @@
 		<h3 th:if="${title == 'Media' OR title == 'Books'}">Books</h3>
 		
 		<a th:if="${title != 'Media'}" href="add" class="btn btn-success">Toevoegen</a>
+		
 		<table class="table table-hover">
 		  <thead>
 		    <tr>
-		      <th>#</th>
-		      <th>First Name</th>
-		      <th>Last Name</th>
-		      <th>Username</th>
+		      <th th:each="header : ${tableHeaders}" th:text="${header}"></th>		     
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr>
-		      <th scope="row">1</th>
-		      <td>Mark</td>
-		      <td>Otto</td>
-		      <td>@mdo</td>
-		    </tr>
-		    <tr>
-		      <th scope="row">2</th>
-		      <td>Jacob</td>
-		      <td>Thornton</td>
-		      <td>@fat</td>
-		    </tr>
-		    <tr>
-		      <th scope="row">3</th>
-		      <td colspan="2">Larry the Bird</td>
-		      <td>@twitter</td>
-		    </tr>
+		    <tr th:each="item : ${items}">	      		      
+		      <td>
+		      	<span class="cover" th:style="'background-image:url(/image/' + ${item.uuid} + ');'"></span>
+		      </td>
+		      <td th:text="${item.title}"></td>
+		      <td th:text="${item.score}"></td>
+		      <td th:text="${item.getGenresAsString()}"></td>
+		      <td>
+		      	<a class="button edit" th:href="${item.uuid + '/edit'}">Edit</a>
+		      	<a class="button delete" th:href="${item.uuid + '/delete'}">Delete</a>
+		      </td>
+		    </tr>		   
 		  </tbody>
 		</table>
+		
+		<form class="logout inline" th:action="@{/logout/}" method="post">
+             <button type="submit"><i class="material-icons">Log out</i></button>
+        </form>
 		
 		<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>

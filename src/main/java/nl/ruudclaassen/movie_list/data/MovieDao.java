@@ -9,12 +9,15 @@ import nl.ruudclaassen.movie_list.model.User;
 public interface MovieDao {
 	List<Movie> getMovies();
 
-	Movie getMovieById(String uuid);
+	Movie getMovieByUUID(String uuid);
 	
 	Movie saveMovie(Movie movie);
 	Movie updateMovie(Movie movie);
 
 	List<Movie> getMoviesPerUser(User user);
+	List<Movie> getFreshMoviesByUser(User user);
+	List<Movie> getJudgedMoviesByUser(User user);
 
 	List<Movie> getMoviesPerGenre(Genre genre);
+	
 }

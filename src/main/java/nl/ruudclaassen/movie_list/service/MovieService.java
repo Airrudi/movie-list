@@ -11,11 +11,13 @@ import nl.ruudclaassen.movie_list.model.User;
 public interface MovieService {
 	List<Movie> getMovies();
 	
-	Movie saveMovie(Movie movie, MultipartFile image);
+	Movie saveMovie(Movie movie, byte[] image);
 
-	Movie getMovieById(String uuid);
+	Movie getMovieByUUID(String uuid);
 
 	List<Movie> getMoviesPerUser(User user);
 
 	List<Movie> getMoviesPerGenre(Genre genre);
+	
+	List<Movie> getFreshMoviesByUser(User user);
 }

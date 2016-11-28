@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
+import nl.ruudclaassen.movie_list.exceptions.NoQueryResultException;
 import nl.ruudclaassen.movie_list.model.Genre;
 
 @Repository
@@ -27,11 +28,11 @@ public class GenreDaoImpl implements GenreDao{
 		Query q = em.createQuery("SELECT g FROM Genre g WHERE uuid = :uuid");
 		q.setParameter("uuid", uuid);
 		
-		try {			
-			return (Genre) q.getSingleResult();	
-		} catch (NoResultException nre) {
-			return new Genre();
-		}	
+		try{
+			return (Genre) q.getSingleResult();
+		} catch(NoResultException nre){
+			throw new NoQueryResultException("No matching rows found in table: 'Genre'");
+		}
 	}
 	
 }

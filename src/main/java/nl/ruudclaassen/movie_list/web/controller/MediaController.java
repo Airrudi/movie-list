@@ -1,40 +1,50 @@
-package nl.ruudclaassen.movie_list.controller;
+package nl.ruudclaassen.movie_list.web.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import javax.validation.Valid;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import nl.ruudclaassen.movie_list.general.Constants;
+import nl.ruudclaassen.movie_list.general.Utilities;
 import nl.ruudclaassen.movie_list.model.Book;
-import nl.ruudclaassen.movie_list.model.Genre;
 import nl.ruudclaassen.movie_list.model.Media;
-import nl.ruudclaassen.movie_list.model.Movie;
 import nl.ruudclaassen.movie_list.model.Series;
-import nl.ruudclaassen.movie_list.service.GenreService;
-import nl.ruudclaassen.movie_list.service.MovieService;
+import nl.ruudclaassen.movie_list.model.User;
+import nl.ruudclaassen.movie_list.model.UserMediaStatus;
+import nl.ruudclaassen.movie_list.service.MediaService;
+import nl.ruudclaassen.movie_list.service.UserMediaService;
+import nl.ruudclaassen.movie_list.service.UserService;
 
 @Controller
 public class MediaController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MediaController.class);
 	
-	@Autowired
-	GenreService genreService;
 	
 	@Autowired
-	MovieService movieService;
+	MediaService mediaService;
+	
+	@Autowired
+	UserMediaService userMediaService;	
+
+	@Autowired
+	UserService userService;
+	
 	
 	private String[] types = {"Movies", "Series", "Books"};	
 	
@@ -49,22 +59,7 @@ public class MediaController {
 		return Constants.MEDIA;
 	}	
 	
-	@RequestMapping("/media/movies/")
-	public String showMovies(Model model) {
-		
-		model.addAttribute("title", "Movies");
-		model.addAttribute("types", types);
-		
-		return Constants.MEDIA;
-	}
 	
-	@RequestMapping(value = "/media/movies/", method = RequestMethod.POST)
-	public String addMovie(Movie movie, @RequestParam MultipartFile image, Model model) {
-		
-		movieService.saveMovie(movie, image);
-		
-		return Constants.MEDIA;
-	}
 	
 	@RequestMapping("/media/series/")
 	public String showSeries(Model model) {
@@ -94,18 +89,7 @@ public class MediaController {
 		return Constants.MEDIA;
 	}
 	
-	// Edit
-	@RequestMapping("/media/movies/add")
-	public String editMovie(Model model) {	
-		List<Genre> genres = genreService.getGenres();
-		
-		model.addAttribute("title", "Movies");
-		model.addAttribute("types", types);
-		model.addAttribute("genres", genres);
-		model.addAttribute("Media", new Movie());
-		
-		return Constants.EDIT_MEDIA;
-	} 
+	
 	
 	@RequestMapping("/media/series/add")
 	public String editSerie(Model model) {
@@ -128,4 +112,40 @@ public class MediaController {
 		
 		return Constants.EDIT_MEDIA;
 	}
+	
+	@RequestMapping(value = "/image/{uuid}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImage(@PathVariable String uuid) throws IOException {
+
+        byte[] imageContent = mediaService.getImageByMediaUUID(uuid);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        return new ResponseEntity<byte[]>(imageContent, headers, HttpStatus.OK);
+    }
+    
+	@RequestMapping(value = "/{username}/media/{mediaUUID}", method = RequestMethod.POST)
+	public ResponseEntity<Boolean>  saveJudgedMedia(
+			@PathVariable String username, 
+			@PathVariable String mediaUUID, 
+			@RequestParam("seen") boolean seen, 
+			@RequestParam("owned") boolean owned, 
+			@RequestParam("watchList") boolean watchList){
+		
+		User user = userService.getUserByUsername(username);
+		Media media = mediaService.getByUUID(mediaUUID);
+		
+		// TODO: Q: Pass variables in a JSON string?
+		Map<String, Boolean> judgeResults = new HashMap<>();
+		judgeResults.put("seen", seen);
+		judgeResults.put("owned", owned);
+		judgeResults.put("watchList", watchList);
+		
+		userMediaService.addToJudged(user, media, judgeResults);
+		
+        final HttpHeaders headers = new HttpHeaders();        
+        return new ResponseEntity<Boolean>(headers, HttpStatus.OK);
+	}
+	
+	
+
+
 }
