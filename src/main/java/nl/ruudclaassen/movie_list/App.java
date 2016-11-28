@@ -1,8 +1,10 @@
 package nl.ruudclaassen.movie_list;
 
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.h2.tools.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -44,6 +46,8 @@ public class App {
 		return bean;
 	}	
 	
-	
-
+	@Bean(destroyMethod="stop")
+	public Server h2WebServer() throws SQLException {
+		return Server.createWebServer("-webAllowOthers", "-webPort","8082").start();
+	}
 }
