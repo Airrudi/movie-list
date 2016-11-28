@@ -12,7 +12,7 @@ import org.springframework.format.Formatter;
 import org.springframework.format.support.FormattingConversionServiceFactoryBean;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 
-import nl.ruudclaassen.movie_list.formatters.GenreFormatter;
+import nl.ruudclaassen.movie_list.web.formatters.GenreFormatter;
 
 // TODO: How to create a connection with the h2 database? 
 
