@@ -1,5 +1,6 @@
 package nl.ruudclaassen.movie_list.web.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,16 @@ public class SwiperController {
 	UserService userService;
 	
 	@RequestMapping("/{username}/swiper/")
-	public String loadSwiper(@PathVariable String username, Model model){
+	public String loadSwiper(
+			@PathVariable String username, 
+			Model model,
+			Principal principal){
 		// TODO: All other media as well (not just movies)
+		
+		// If visited page does not belong to users', redirect to own page
+		if(!principal.getName().equals(username)){
+			return "redirect:/" + principal.getName() + "/swiper/" ;
+		}
 		
 		User user = userService.getUserByUsername(username);
 		List<Movie> movies = movieService.getFreshMoviesByUser(user);

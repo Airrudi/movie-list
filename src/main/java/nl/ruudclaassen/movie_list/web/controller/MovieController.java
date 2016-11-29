@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,9 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import nl.ruudclaassen.movie_list.general.Constants;
 import nl.ruudclaassen.movie_list.model.Genre;
-import nl.ruudclaassen.movie_list.model.Media;
 import nl.ruudclaassen.movie_list.model.Movie;
-import nl.ruudclaassen.movie_list.model.User;
 import nl.ruudclaassen.movie_list.service.GenreService;
 import nl.ruudclaassen.movie_list.service.MediaService;
 import nl.ruudclaassen.movie_list.service.MovieService;
@@ -56,6 +53,8 @@ public class MovieController {
 
 		return Constants.MEDIA;
 	}
+	
+	
 
 	// Edit
 	@RequestMapping("/media/movies/add")
@@ -101,22 +100,13 @@ public class MovieController {
 
 		return Constants.REDIRECT_MOVIES;
 	}
+	
 
-	@RequestMapping("/{username}/movies/")
-	public String showOverview(Model model, @PathVariable String username) {
-		User user = userService.getUserByUsername(username);
-		
-		Map<String, List<Media>> seenAndToSee = userMediaService.getSeenAndToSee(user); 
-		
-		List<Media> itemsSeen = seenAndToSee.get("seen");
-		List<Media> itemsToSee = seenAndToSee.get("toSee");		
-		
-		model.addAttribute("itemsSeen", itemsSeen);
-		model.addAttribute("itemsToSee", itemsToSee);		
-		model.addAttribute("username", username);
-		
-		return Constants.USER_MEDIA;
-	}
+	// #####################
+	// ### VISIBLE PAGES ###
+	// #####################
+	
+	
 
 	// API
 //	@RequestMapping(value = "/{userUUID}/movies/add/", method = RequestMethod.POST)

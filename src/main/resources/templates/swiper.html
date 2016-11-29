@@ -6,8 +6,9 @@
 <link rel="stylesheet" th:href="@{/style.css}" />
 <link rel="stylesheet" th:href="@{/swiper/css/jTinder.css}" />
 </head>
-<body id="swiper" class="page">
+<body id="media-detail" class="page swiper">
 	<!-- TODO: Login  -->
+	<a th:href="${'/' + username + '/'}">Home</a>	
 
 	<h1>Swiper</h1>
 	
@@ -16,13 +17,16 @@
 		<div id="tinderslide">
 		    <ul>
 	        	<li th:each="item : ${media}" class="item" th:attr="data-uuid=${item.uuid}">
-	        		<!-- TEMP, title will go away if images are used -->
-	        		<p th:text="${item.title}"></p>
-					<button type="button" class="watch topLayer" th:classappend="${user.todo.contains(item)} ? active">Add to Watch</button>
-					<button type="button" class="owned topLayer" th:classappend="${user.judgedMovies.get(item)} ? active">Add to Owned</button>							
-					<span class="image" th:style="'background-image:url(/image/' + ${item.uuid} + ');'"></span>
-	        	</li>	        
+	        		<!-- TEMP, title will go away if images are used -->	        		
+					<div th:id="${'item-' + item.uuid}" class="imageContainer">
+						<button class="button toggleTodo"></button>
+						<button class="button toggleOwned"></button>
+						<span class="image" th:style="'background-image:url(/image/' + ${item.uuid} + ');'"></span>
+					</div>
+	        	</li>  
 		    </ul>
+		    
+		    <p th:if="${media.size() == 0}">Die-hard! Je hebt alle media beoordeeld. Je kunt deze bekijken en aanpassen in je <a th:href="${'/' + username + '/movies/'}">media overzicht</a>.</p>
 		</div>
 	</div>
 	
@@ -33,31 +37,30 @@
 
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 	<script th:src="@{/swiper/js/jquery.transform2d.js}"></script>
-	<script th:src="@{/swiper/js/jquery.jTinder.js}"></script>	
+	<script th:src="@{/swiper/js/jquery.jTinder.js}"></script>
 		
 	<script>
-		var username = window.location.pathname.split("/")[1];		
+		var username = window.location.pathname.split("/")[1];
 	
 		$(function() {
 			// $("#tinderslide").jTinder();
 			
 			$("#tinderslide").jTinder({
 			    onDislike: function (item) {
-			    	judgeSeen(item, false);
+			    	judgeSeen(item, false);			    	
 			    },
 			    onLike: function (item) {			    	
-			    	judgeSeen(item, true);
+			    	judgeSeen(item, true);			    	
 			    },
 			    animationRevertSpeed: 200,
 			    animationSpeed: 400,
 			    threshold: 1,
 			    likeSelector: '.like',
 			    dislikeSelector: '.dislike'
-			});
+			});			
 			
 			
-			
-		 	$("body").on("click", ".watch, .owned", function(){
+			$("body").on("click", ".toggleTodo, .toggleOwned", function(){
 				if( $(this).hasClass("active") ){
 					$(this).removeClass("active");					
 				} else {					
@@ -65,24 +68,21 @@
 				}				
 			});
 			
-			
 		});
 		
 		
-		function judgeSeen(item, seen){
-			
+		function judgeSeen(item, seen){			
 			var mediaId = item.data("uuid");
-			var owned = $(".active .owned").hasClass("active");
-			var watchList = $(".active .watch").hasClass("active");
+			var owned = item.find(".toggleOwned").hasClass("active");
+			var todo = item.find(".toggleTodo").hasClass("active");
 			var url = "/" + username + "/media/" + mediaId;
 			
+			
 			var postData = {
-					"_csrf": $("input[name='_csrf']").val(),
-					//"judgeResults": {
-						"seen": seen,
-						"owned": owned,
-						"watchList": watchList
-					//}
+				"_csrf": $("input[name='_csrf']").val(),					
+				"seen": seen,
+				"owned": owned,
+				"todo": todo					
 			}
 			
 			

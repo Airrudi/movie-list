@@ -2,6 +2,7 @@ package nl.ruudclaassen.movie_list.web.controller;
 
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +60,26 @@ public class MediaController {
 		return Constants.MEDIA;
 	}	
 	
+	// #####################
+	// ### VISIBLE PAGES ###
+	// #####################
+	
+	@RequestMapping("/media/{type}/{mediaUUID}")
+	public String movieDetails(Model model, @PathVariable String mediaUUID, Principal principal) {
+		User user = userService.getUserByUsername(principal.getName());
+		
+		Media media = mediaService.getByUUID(mediaUUID);
+		UserMediaStatus usm = user.getJudgedMovies().get(media); // Get seen, owned (and your rating)
+		boolean todo = user.getTodo().contains(media); // Check if movie is on your todo list
+		
+		model.addAttribute("username", principal.getName());
+		model.addAttribute("media", media);
+		model.addAttribute("todo", todo);
+		model.addAttribute("owned", usm.isOwned());
+		model.addAttribute("seen", usm.isSeen());		
+
+		return Constants.MEDIA_DETAIL;
+	}	
 	
 	
 	@RequestMapping("/media/series/")
@@ -124,20 +145,21 @@ public class MediaController {
     
 	@RequestMapping(value = "/{username}/media/{mediaUUID}", method = RequestMethod.POST)
 	public ResponseEntity<Boolean>  saveJudgedMedia(
-			@PathVariable String username, 
+			Principal principal,
 			@PathVariable String mediaUUID, 
 			@RequestParam("seen") boolean seen, 
 			@RequestParam("owned") boolean owned, 
-			@RequestParam("watchList") boolean watchList){
+			@RequestParam("todo") boolean todo
+	){
 		
-		User user = userService.getUserByUsername(username);
+		User user = userService.getUserByUsername(principal.getName());
 		Media media = mediaService.getByUUID(mediaUUID);
 		
 		// TODO: Q: Pass variables in a JSON string?
 		Map<String, Boolean> judgeResults = new HashMap<>();
 		judgeResults.put("seen", seen);
 		judgeResults.put("owned", owned);
-		judgeResults.put("watchList", watchList);
+		judgeResults.put("todo", todo);
 		
 		userMediaService.addToJudged(user, media, judgeResults);
 		

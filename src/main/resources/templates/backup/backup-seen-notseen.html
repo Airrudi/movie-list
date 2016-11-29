@@ -10,6 +10,7 @@
 		<!-- TODO: Create dynamic back button (for all media, not hardcode it for movies) -->
 		<a th:href="${'/' + username + '/movies/'}">Back</a>
 		
+		<button class="filter" onclick=""></button>
 		
 		
 		<form class="logout inline" th:action="@{/logout/}" method="post">
@@ -17,18 +18,12 @@
         </form>
 	
 		<!-- TODO: Login  -->
-		<h1>Movies</h1>		
-		<h3 th:inline="text">[[${title}]] (<span id="seenCounter" class="counter" th:inline="text">[[${media.size()}]]</span>)</h3>
+	
+		<h1 th:text="${title}"></h1>
 		
-		<div id="filterContainer">
-			<button id="todoFilter" th:if="!${type.equals('todo')}" class="filter" onclick="filter()">Todo</button>
-			<button id="ownedFilter" th:if="!${type.equals('owned')}" class="filter" onclick="filter()">Owned</button>
-			<button id="seenFilter" th:if="!${type.equals('seen') || type.equals('notseen')}" class="filter" onclick="filter()">Seen</button>			
-		</div>
-		
-		
+		<h3>Seen (<span id="seenCounter" class="counter" th:inline="text">[[${itemsSeen.size()}]]</span>)</h3>
 		<div id="seen" class="blockContainer">
-			<div th:id="${'item-' + item.key.uuid}" class="mediaBlock" th:each="item : ${media}">				
+			<div th:id="${'item-' + item.key.uuid}" class="mediaBlock" th:each="item : ${itemsSeen}">				
 				<button class="button toggleSeen notSeen" th:onclick="'toggleSeen(\'' + ${item.key.uuid} + '\');'" th:classappend="${item.value.seen} ? active"></button>
 				<button class="button toggleTodo" th:onclick="'toggleTodo(\'' + ${item.key.uuid} + '\');'" th:classappend="${todoList.contains(item.key)} ? active"></button>
 				<button class="button toggleOwned" th:onclick="'toggleOwned(\'' + ${item.key.uuid} + '\');'" th:classappend="${item.value.owned} ? active"></button>
@@ -36,23 +31,28 @@
 				<button class="button delete" th:onclick="'removeFromJudged(\'' + ${item.key.uuid} + '\');'"></button><!-- TEMP (For testing only)-->				
 			</div>
 		</div>
-				
+		
+		<!-- TODO: Items you have not seen and don't want to see? -->
+		<!-- TODO: Toggle items between seen and not seen: no need to remove them from judged... just replace the remove by a favorite -->
+		
+		<h3>Not Seen (<span id="notSeenCounter" class="counter" th:inline="text">[[${itemsToSee.size()}]]</span>)</h3>
+		<div id="notSeen" class="blockContainer">
+			<div th:id="${'item-' + item.key.uuid}" class="mediaBlock"  th:each="item : ${itemsToSee}">		
+			
+			<!-- TODO: Fix seen vs not seen (correct auto class addition) -->
+			<button class="button toggleSeen" th:onclick="'toggleSeen(\'' + ${item.key.uuid} + '\');'" th:classappend="${item.value.seen} ? active"></button>
+			<button class="button toggleTodo" th:onclick="'toggleTodo(\'' + ${item.key.uuid} + '\');'" th:classappend="${todoList.contains(item.key)} ? active"></button>
+			<button class="button toggleOwned" th:onclick="'toggleOwned(\'' + ${item.key.uuid} + '\');'" th:classappend="${item.value.owned} ? active"></button>
+			<span class="image cover" th:style="'background-image:url(/image/' + ${item.key.uuid} + ');'"></span>
+			<button class="button delete" th:onclick="'removeFromJudged(\'' + ${item.key.uuid} + '\');'"></button><!-- TEMP (For testing only)-->
+			</div>
+		</div>
 		
 		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 	
 		<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
 		<script th:src="@{/media-interaction.js}"></script>
-		
-		<script>
-			function filter(){
-				alert("Filters not made yet");
-			}
-			
-			
-		
-		
-		</script>
 		
 	</body>
 </html>

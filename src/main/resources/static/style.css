@@ -14,16 +14,113 @@ h1{
 
 .btn{margin:20px 0;}
 
+#user-media-list .button.toggleSeen{top:150px; right:6px;}
+.button.toggleSeen{background-color: blue;} 	
+
+
+#user-media-list .button.delete{top:150px; left:6px;} 
+.button.delete{background-color: red;}
+
+.button{border: none; transition:.2s; cursor:pointer;}
+.button:hover{opacity:.7;}
+
+.mediaBlock .button{	
+	opacity:0;	
+	height: 40px;
+  	width: 40px;  	
+  	border-radius: 50%;
+  	position: absolute;
+}
+#user-media-list .button.toggleOwned{left:6px; top:6px;}
+.button.toggleOwned{opacity:1; border:4px solid green; background-color:transparent;}
+.button.toggleOwned:hover, .button.toggleOwned.active{opacity:1; background-color:green;}
+.button.toggleOwned.active:hover{background-color:rgba(0,255,0,.65);}
+
+.button.toggleTodo{opacity:1; border:4px solid #fff; background-color:transparent; right:6px; top:6px;}
+.button.toggleTodo:hover, .button.toggleTodo.active{opacity:1; background-color:#fff;}
+.button.toggleTodo.active:hover{background-color:rgba(255,255,255,.65);}
+
+.mediaBlock:hover .button.delete{opacity:1;}
+.mediaBlock:hover .button.toggleSeen{opacity:1;}
+.mediaBlock:hover .button.toggleOwned{opacity:1;}
+    
+    
 .cover{display:block; height:100%; width:100%; background-repeat:no-repeat; background-position:center center; background-size:cover;}
 
 #swiperContainer{
 	width:67%;
 	height:80%;	
-	margin:0 auto;
+	position:absolute;
+	left:50%;
 }
 
-.button{border: none; transition:.2s; cursor:pointer;}
-.button:hover{opacity:.7;}
+#media-detail .imageContainer{height:500px; width:356px; position:relative;}
+#media-detail.swiper .imageContainer{height:100%; width:100%; position:relative; border-radius:10px;}
+#media-detail .imageContainer .image{
+	height: 100%;
+    background-image: url(/image/3c54da42-e267-4f0f-af5f-4aac860fc7c5);
+    width: 100%;
+    background-size: cover;
+    background-repeat:no-repeat;
+    display: block;
+}
+
+#media-detail .imageContainer .button{
+	height: 65px;
+    width: 65px;
+    border-radius: 50%;
+    position: absolute;
+    z-index:10;
+}	
+
+#filterContainer{margin:32px 0;}
+#filterContainer .filter{
+	padding:3px 12px;
+	background-color: transparent;
+	border:1px solid orange;
+    border-radius: 4px;	
+    cursor:pointer;
+    transition:.2s;
+}
+
+#filterContainer .filter:hover{background-color:rgba(255,165,0,.5); }
+#filterContainer .filter.active{background-color:orange;}
+
+
+#categoryContainer{margin-left:-12px;}
+
+.categoryBlock{
+	display: inline-block;
+    width: 25%;
+    height: 300px;
+   
+    transition: .2s;
+    float: left;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.categoryBlock .inner{
+	height:100%; 
+	width:100%; 
+	background-color: #d3d3d3;
+    border-radius: 4px;
+    display:block;
+}
+
+.categoryBlock:hover{opacity:.8;}
+
+#media-detail .toggleSeen{bottom: 40px; right: 10px;
+}
+#media-detail .toggleSeen.active{}
+
+#media-detail .toggleTodo{top: 40px; right: 10px;}
+#media-detail .toggleTodo.active{}
+
+#media-detail .toggleOwned{top: 40px; left: 10px;}
+#media-detail .toggleOwned.active{}
+
+.infoLink{cursor:help;}
 
 .logout{position: absolute;
     right: 0;
@@ -36,14 +133,14 @@ h1{
     color: #fff;}
 
 .blockContainer{display:flex; flex-wrap:wrap; justify-content:flex-start; margin-left:-10px; margin-bottom:40px;}
-.blockContainer .mediaBlock{height:200px; width:130px; border-radius:5px; margin: 10px; box-sizing: border-box; overflow:hidden;}
+.blockContainer .mediaBlock{height:200px; width:130px; border-radius:5px; margin: 10px; box-sizing: border-box; position:relative; border-radius:5px; overflow:hidden;}
 
-#mediaContainer .item{display:none; pointer-events: none}
+#mediaContainer .item{display:none; pointer-events: none; }
 #mediaContainer .item.active{display:block;}
 
 .item .watch, .item .owned{background-color:red;}
 .item .watch.active, .item .owned.active{background-color:green;} 
-.item .image{display: block; height: 100%; width: 100%; position: absolute; top: 0; background-size: cover;}
+.item .image{display: block; height: 100%; width: 100%; position: absolute; top: 0; background-size: cover; }
 
 .topLayer{position:relative; z-index:50;}
 

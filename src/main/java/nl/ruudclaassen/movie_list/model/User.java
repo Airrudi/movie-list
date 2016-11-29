@@ -2,6 +2,7 @@ package nl.ruudclaassen.movie_list.model;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,7 +30,7 @@ public class User {
 	// Map<Movie, UserMovieStatus> movieStatusses;
 
 	@OneToMany(orphanRemoval = true)
-	private List<Media> todo;
+	private Set<Media> todo;
 
 	@OneToMany
 	private List<User> friends;
@@ -79,11 +80,11 @@ public class User {
 		this.email = email;
 	}
 
-	public List<Media> getTodo() {
+	public Set<Media> getTodo() {
 		return todo;
 	}
 
-	public void setTodo(List<Media> todo) {
+	public void setTodo(Set<Media> todo) {
 		this.todo = todo;
 	}
 

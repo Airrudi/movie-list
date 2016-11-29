@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="ISO-8859-1"/>
+		<title th:text="${title}"></title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous"/>
+		<link rel="stylesheet" th:href="@{/style.css}" />
+	</head>
+	<body id="media-detail" class="page">
+		<a th:href="${'/' + username + '/'}">Home</a>
+		<a th:href="${'/' + username + '/swiper/'}">swiper</a>
+		
+		<form class="logout inline" th:action="@{/logout/}" method="post">
+             <button class="button logout" type="submit">Log out</button>
+        </form>
+	
+		<h1 th:text="${media.title}"></h1>
+		<p th:text="${media.score}"></p>
+		
+		<!-- TODO: Q: What if no user is logged in? Hide the editable fields, or only usable when logged in? -->
+		<div th:id="${'item-' + media.uuid}" class="imageContainer">			
+			<button class="button toggleSeen" th:onclick="'toggleSeen(\'' + ${media.uuid} + '\');'" th:classappend="${seen} ? active"></button>
+			<button class="button toggleTodo" th:onclick="'toggleTodo(\'' + ${media.uuid} + '\');'" th:classappend="${todo} ? active"></button>
+			<button class="button toggleOwned" th:onclick="'toggleOwned(\'' + ${media.uuid} + '\');'" th:classappend="${owned} ? active"></button>
+			<span class="image" th:style="'background-image:url(/image/' + ${media.uuid} + ');'"></span>
+		</div>
+		
+		<div id="genreContainer">
+			<a class="genre tag" th:each="genre : ${media.genres}" th:text="${genre.name}"></a>
+		</div>
+		
+		<p th:text="${media.summary}"></p>
+		
+			
+	
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+		<script th:src="@{/media-interaction.js}"></script>
+	</body>
+</html>

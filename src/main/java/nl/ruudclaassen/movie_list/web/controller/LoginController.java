@@ -13,10 +13,9 @@ import nl.ruudclaassen.movie_list.general.Constants;
 import nl.ruudclaassen.movie_list.model.Login;
 
 @Controller
-@RequestMapping("/login/")
 public class LoginController {
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping("/login/")
 	public String showLogin(Model model) {
 		
 		model.addAttribute("title", "Login");
@@ -25,14 +24,14 @@ public class LoginController {
 		return Constants.LOGIN;
 	}
 	
-	@RequestMapping(method=RequestMethod.POST)
+	@RequestMapping(value = "/logout/", method=RequestMethod.POST)
 	public String logout(HttpSession session) {
 	    session.invalidate();
 	    return Constants.REDIRECT_LOGIN; 
 	}
 	
-	@RequestMapping("/loggedIn/")
-	public String redirectLoginSuccess(Principal principal){		
+	@RequestMapping("/login/success")
+	public String redirectLoginSuccess(Principal principal){
 		return "redirect:/" + principal.getName() + "/";
 	}
 }

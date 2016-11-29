@@ -4,6 +4,7 @@ public class Constants {
 	public static final String HOMEPAGE = "home";
 	
     public static final String MEDIA = "media";
+    public static final String MEDIA_DETAIL = "media-detail";
     public static final String LOGIN = "login";
     public static final String EDIT_MEDIA = "edit-media";
     
@@ -11,8 +12,10 @@ public class Constants {
     public static final String MEDIA_SERIE = "SERIE";
     public static final String MEDIA_BOOK = "BOOK";
     
+    
     public static final String USER_MEDIA = "user-media-list";
     public static final String USER_HOME = "user-home";
+    public static final String USER_MEDIA_SUBCATEGORIES = "user-media-subcategories";
     
     
     

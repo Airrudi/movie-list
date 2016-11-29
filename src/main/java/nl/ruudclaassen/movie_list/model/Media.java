@@ -29,6 +29,9 @@ import org.springframework.http.ResponseEntity;
 @DiscriminatorColumn(name = "type")
 public abstract class Media {
 	
+	// TODO: Q: Best way to use enum?
+	public static enum MediaType { MOVIE, SERIE, BOOK };
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
@@ -54,6 +57,8 @@ public abstract class Media {
 	private String summary;
 
 	public Media() {}
+	
+	 
 
 	public int getId() {
 		return id;

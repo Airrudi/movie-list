@@ -5,24 +5,25 @@
 <title>Home</title>
 <link rel="stylesheet" th:href="@{/style.css}" />
 </head>
-<body id="home" class="page">
+<body id="subcategories" class="page">
 	<!-- TODO: Login  -->
+	<a th:href="${'/' + username + '/'}">Home (User)</a>
 
-	<h1>User homepage</h1>
+	<h1>Movies</h1>
 	
 	<div id="categoryContainer">
 		<div class="categoryBlock">
-			<a href="swiper/" id="owned" class="inner">Swiper</a>
+			<a href="todo/" id="todo" class="inner">Todo</a>
 		</div>
 		<div class="categoryBlock">
-			<a href="movies/" id="todo" class="inner">Movies</a>
+			<a href="notseen/" id="notseen" class="inner">notseen</a>
 		</div>
 		<div class="categoryBlock">
-			<a href="series/" id="notseen" class="inner">Series</a>
+			<a href="seen/" id="seen" class="inner">seen</a>
 		</div>
 		<div class="categoryBlock">
-			<a href="books/" id="seen" class="inner">Books</a>
-		</div>		
+			<a href="owned/" id="owned" class="inner">owned</a>
+		</div>
 	</div>
 	
 

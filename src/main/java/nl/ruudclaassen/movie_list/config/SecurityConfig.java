@@ -1,7 +1,5 @@
 package nl.ruudclaassen.movie_list.config;
 
-import javax.annotation.security.PermitAll;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -49,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	
 	public AuthenticationSuccessHandler loginSuccessHandler(){
-		return (request, response, authentication) -> response.sendRedirect("/loggedIn/");
+		return (request, response, authentication) -> response.sendRedirect("/login/success");
 	}
 	
 	public AuthenticationFailureHandler loginFailureHandler(){
