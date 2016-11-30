@@ -67,11 +67,12 @@ public class UserMediaServiceImpl implements UserMediaService {
 
 	@Override
 	@Transactional
-	public void addToJudged(User user, Media media, Map<String, Boolean> judgeResults) {
+	public void addToJudged(User user, Media media, Map<String, Boolean> judgeResults, int rating) {
 		
 		UserMediaStatus ums = new UserMediaStatus();
 		ums.setOwned(judgeResults.get("owned"));
 		ums.setSeen(judgeResults.get("seen"));
+		ums.setRating(rating);
 		//ums = userMediaStatusDao.save(ums);	
 		
 		// TODO: Q: Create new method that adds a movie to the getjudgedMovies directly?
@@ -94,6 +95,11 @@ public class UserMediaServiceImpl implements UserMediaService {
 		
 		Map<Media, UserMediaStatus> judgedMedia = user.getJudgedMovies();
 		judgedMedia.remove(media);
+		Set<Media> todoMedia = user.getTodo();		
+
+		if(todoMedia.contains(media)){
+			todoMedia.remove(media);
+		}
 		
 		userService.saveUser(user);
 	}

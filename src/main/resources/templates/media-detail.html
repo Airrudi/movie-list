@@ -17,6 +17,8 @@
 		<h1 th:text="${media.title}"></h1>
 		<p th:text="${media.score}"></p>
 		
+		<p th:if="${rated}" th:inline="text">You scored this movie a [[${rating}]]"</p>
+		
 		<!-- TODO: Q: What if no user is logged in? Hide the editable fields, or only usable when logged in? -->
 		<div th:id="${'item-' + media.uuid}" class="imageContainer">			
 			<button class="button toggleSeen" th:onclick="'toggleSeen(\'' + ${media.uuid} + '\');'" th:classappend="${seen} ? active"></button>

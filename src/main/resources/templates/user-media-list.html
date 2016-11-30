@@ -9,8 +9,7 @@
 	<body id="user-media-list" class="page">
 		<!-- TODO: Create dynamic back button (for all media, not hardcode it for movies) -->
 		<a th:href="${'/' + username + '/movies/'}">Back</a>
-		
-		
+				
 		
 		<form class="logout inline" th:action="@{/logout/}" method="post">
              <button class="button logout" type="submit">Log out</button>
@@ -24,8 +23,7 @@
 			<button id="todoFilter" th:if="!${type.equals('todo')}" class="filter" onclick="filter()">Todo</button>
 			<button id="ownedFilter" th:if="!${type.equals('owned')}" class="filter" onclick="filter()">Owned</button>
 			<button id="seenFilter" th:if="!${type.equals('seen') || type.equals('notseen')}" class="filter" onclick="filter()">Seen</button>			
-		</div>
-		
+		</div>		
 		
 		<div id="seen" class="blockContainer">
 			<div th:id="${'item-' + item.key.uuid}" class="mediaBlock" th:each="item : ${media}">				
@@ -33,7 +31,8 @@
 				<button class="button toggleTodo" th:onclick="'toggleTodo(\'' + ${item.key.uuid} + '\');'" th:classappend="${todoList.contains(item.key)} ? active"></button>
 				<button class="button toggleOwned" th:onclick="'toggleOwned(\'' + ${item.key.uuid} + '\');'" th:classappend="${item.value.owned} ? active"></button>
 				<a th:href="${'/media/movies/' + item.key.uuid}" title="Click to view details" class="image cover infoLink" th:style="'background-image:url(/image/' + ${item.key.uuid} + ');'"></a>
-				<button class="button delete" th:onclick="'removeFromJudged(\'' + ${item.key.uuid} + '\');'"></button><!-- TEMP (For testing only)-->				
+				<button class="button delete" th:onclick="'removeFromJudged(\'' + ${item.key.uuid} + '\');'"></button><!-- TEMP (For testing only)-->
+				<span class="rating" th:text="${item.value.rating}"></span>				
 			</div>
 		</div>
 				
@@ -45,6 +44,9 @@
 		<script th:src="@{/media-interaction.js}"></script>
 		
 		<script>
+			// If currently on todo page and you uncheck the todo circle, the movie should disappear
+			// Same accounts for when you are in owned menu and uncheck owned
+		
 			function filter(){
 				alert("Filters not made yet");
 			}

@@ -8,10 +8,7 @@
 </head>
 <body id="media-detail" class="page swiper">
 	<!-- TODO: Login  -->
-	<a th:href="${'/' + username + '/'}">Home</a>	
-
-	<h1>Swiper</h1>
-	
+	<a th:href="${'/' + username + '/'}">Home</a>
 	
 	<div id="swiperContainer">
 		<div id="tinderslide">
@@ -23,15 +20,24 @@
 						<button class="button toggleOwned"></button>
 						<span class="image" th:style="'background-image:url(/image/' + ${item.uuid} + ');'"></span>
 					</div>
+					
+					
 	        	</li>  
-		    </ul>
-		    
-		    <p th:if="${media.size() == 0}">Die-hard! Je hebt alle media beoordeeld. Je kunt deze bekijken en aanpassen in je <a th:href="${'/' + username + '/movies/'}">media overzicht</a>.</p>
-		</div>
+		    </ul>		    
+		  </div>
+		  
+		  <div id="ratingContainer">
+		  	<!-- <span id="bullet"></span> -->
+		  	<div id="beam"></div>
+		  </div>
+		  
+		  <p th:if="${media.size() == 0}">Die-hard! Je hebt alle media beoordeeld. Je kunt deze bekijken en aanpassen in je <a th:href="${'/' + username + '/movies/'}">media overzicht</a>.</p>
+	
 	</div>
 	
 	
 	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+	<input type="hidden" name="rating" value="50" />
 	
 	
 
@@ -44,6 +50,18 @@
 	
 		$(function() {
 			// $("#tinderslide").jTinder();
+			
+			$("body").on("click", "#beam", function(e){
+				var ratingElement =  $("input[name='rating']");
+			    var perc = e.offsetX/ $(this).width() * 100;
+			   	
+			    ratingElement.val(Math.round(perc));
+			    
+			    // Trigger the like / seen action:
+			    $("#tinderslide").jTinder('like');
+			    
+			    
+			});
 			
 			$("#tinderslide").jTinder({
 			    onDislike: function (item) {
@@ -76,13 +94,20 @@
 			var owned = item.find(".toggleOwned").hasClass("active");
 			var todo = item.find(".toggleTodo").hasClass("active");
 			var url = "/" + username + "/media/" + mediaId;
+			var rating = $("input[name='rating']").val(); // Reset rating
+			
+			console.log(rating);			
+			
+			// Reset the value
+		    $("input[name='rating']").val(50);
 			
 			
 			var postData = {
 				"_csrf": $("input[name='_csrf']").val(),					
 				"seen": seen,
 				"owned": owned,
-				"todo": todo					
+				"todo": todo,
+				"rating":rating
 			}
 			
 			

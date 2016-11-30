@@ -14,8 +14,7 @@ public class UserMediaStatus {
 
 	private boolean seen;
 	private boolean owned;
-
-	//private float rating;
+	private int rating;
 
 	public int getId() {
 		return id;
@@ -41,12 +40,12 @@ public class UserMediaStatus {
 		this.owned = owned;
 	}
 
-//	public float getRating() {
-//		return rating;
-//	}
-//
-//	public void setRating(float rating) {
-//		this.rating = rating;
-//	}
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
 
 }

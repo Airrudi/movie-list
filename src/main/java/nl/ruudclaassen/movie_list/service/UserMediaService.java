@@ -12,7 +12,7 @@ public interface UserMediaService {
 	Map<String, Map<Media,UserMediaStatus>> getSeenAndToSee(User user);
 	List<Media> getItemsSeen(User user);
 	List<Media> getItemsToSee(User user);
-	void addToJudged(User user, Media media, Map<String, Boolean> judgeResults);
+	void addToJudged(User user, Media media, Map<String, Boolean> judgeResults, int rating);
 	
 	void removeFromJudged(String username, String mediaUUID);
 	void toggleSeen(String username, String mediaUUID, boolean seen);	

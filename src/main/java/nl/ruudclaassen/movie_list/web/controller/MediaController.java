@@ -76,7 +76,8 @@ public class MediaController {
 		model.addAttribute("media", media);
 		model.addAttribute("todo", todo);
 		model.addAttribute("owned", usm.isOwned());
-		model.addAttribute("seen", usm.isSeen());		
+		model.addAttribute("seen", usm.isSeen());
+		model.addAttribute("rating", usm.getRating());	
 
 		return Constants.MEDIA_DETAIL;
 	}	
@@ -149,7 +150,8 @@ public class MediaController {
 			@PathVariable String mediaUUID, 
 			@RequestParam("seen") boolean seen, 
 			@RequestParam("owned") boolean owned, 
-			@RequestParam("todo") boolean todo
+			@RequestParam("todo") boolean todo,
+			@RequestParam("rating") int rating
 	){
 		
 		User user = userService.getUserByUsername(principal.getName());
@@ -161,7 +163,9 @@ public class MediaController {
 		judgeResults.put("owned", owned);
 		judgeResults.put("todo", todo);
 		
-		userMediaService.addToJudged(user, media, judgeResults);
+		// TODO: Q: Create a new object to hold these values?
+		
+		userMediaService.addToJudged(user, media, judgeResults, rating);
 		
         final HttpHeaders headers = new HttpHeaders();        
         return new ResponseEntity<Boolean>(headers, HttpStatus.OK);

@@ -35,7 +35,7 @@
 		  	
 		  	<div class="form-group">
 		    	<label for="genres">Genres</label>
-		    	<select id="genres" multiple="multiple" class="form-control">
+		    	<select id="genres" multiple="multiple" class="form-control" th:field="*{genres}">
 		    	  	<option th:each="genre : ${genres}" th:value="${genre.uuid}" th:text="${genre.name}"  th:selected="${genres.contains(genre.uuid)}"></option>			    
 		    	</select>
 		  	</div>		  
