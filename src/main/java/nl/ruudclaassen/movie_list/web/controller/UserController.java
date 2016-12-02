@@ -1,7 +1,10 @@
 package nl.ruudclaassen.movie_list.web.controller;
 
 import java.security.Principal;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +24,8 @@ import nl.ruudclaassen.movie_list.model.User;
 import nl.ruudclaassen.movie_list.model.UserMediaStatus;
 import nl.ruudclaassen.movie_list.service.UserMediaService;
 import nl.ruudclaassen.movie_list.service.UserService;
+import java.util.stream.Collectors;
+
 
 @Controller
 public class UserController {
@@ -36,12 +41,17 @@ public class UserController {
 	// ### VISIBLE PAGES ###
 	// #####################
 	
+	
+
+	
 	@RequestMapping("/{username}/")
 	public String showCategories(Model model, @PathVariable String username){
 		model.addAttribute("username", username);
 		
 		return Constants.USER_HOME;
 	}
+	
+		
 	
 	@RequestMapping("/{username}/{mediaType}/")
 	public String showSubcategories(Model model, Principal principal) {		
@@ -53,8 +63,12 @@ public class UserController {
 	@RequestMapping("/{username}/{type}/todo/")
 	public String show(Model model, @PathVariable String username, MediaType type) { // @PathVariable TODO: FIX Pathvariable conversion		
 		User user = userService.getUserByUsername(username);
-		Map<Media, UserMediaStatus> todo = userMediaService.getTodo(user, type); 
+		Map<Media, UserMediaStatus> todo = userMediaService.getTodo(user, type);
+		Set<Media> ownedByFriends = userService.getMediaOwnedByFriends(user);
+		Set<Media> todoByFriends = userService.getAllFriendTodos(user);
 		
+		model.addAttribute("ownedByFriends",ownedByFriends);
+		model.addAttribute("todoByFriends",todoByFriends);	
 		model.addAttribute("title", "Todo");
 		model.addAttribute("type", "todo");
 		model.addAttribute("media", todo);
@@ -70,6 +84,9 @@ public class UserController {
 		
 		Map<String, Map<Media, UserMediaStatus>> seenAndToSee = userMediaService.getSeenAndToSee(user);
 		Map<Media, UserMediaStatus> itemsSeen = seenAndToSee.get("seen");
+		
+		Set<Media> ownedByFriends = userService.getMediaOwnedByFriends(user);		
+		model.addAttribute("ownedByFriends",ownedByFriends);
 		
 		model.addAttribute("title", "Seen");
 		model.addAttribute("type", "seen");
@@ -87,6 +104,9 @@ public class UserController {
 		Map<String, Map<Media, UserMediaStatus>> seenAndToSee = userMediaService.getSeenAndToSee(user);
 		Map<Media, UserMediaStatus> notSeen = seenAndToSee.get("toSee");
 		
+		Set<Media> ownedByFriends = userService.getMediaOwnedByFriends(user);		
+		model.addAttribute("ownedByFriends",ownedByFriends);
+		
 		model.addAttribute("title", "Not seen");
 		model.addAttribute("type", "notseen");
 		model.addAttribute("media", notSeen);
@@ -100,6 +120,9 @@ public class UserController {
 	public String showOwned(Model model, @PathVariable String username, MediaType type) { // TODO Enum		
 		User user = userService.getUserByUsername(username);
 		Map<Media, UserMediaStatus> ownedMedia = userMediaService.getOwned(user, type);
+		
+		Set<Media> ownedByFriends = userService.getMediaOwnedByFriends(user);		
+		model.addAttribute("ownedByFriends",ownedByFriends);
 		
 		model.addAttribute("title", "Owned");
 		model.addAttribute("type", "owned");
@@ -203,5 +226,55 @@ public class UserController {
 			
 			return Constants.USER_MEDIA;
 		}*/
+	
+		public static class UserViewModel{
+			
+			private final User user;
+			private final Set<Media> owned;
+			private final Set<Media> seen;
+			
+			public UserViewModel(User user, Set<Media> seen, Set<Media> owned) {				
+				this.user = user;
+				this.owned = owned;
+				this.seen = seen;
+			}
+
+			public User getUser() {
+				return user;
+			}
+			
+			public Set<Media> getOwned() {
+				return owned;
+			}
+			
+			public Set<Media> getSeen() {
+				return seen;
+			}
+
+			@Override
+			public int hashCode() {
+				final int prime = 31;
+				int result = 1;
+				result = prime * result + ((user == null) ? 0 : user.hashCode());
+				return result;
+			}
+
+			@Override
+			public boolean equals(Object obj) {
+				if (this == obj)
+					return true;
+				if (obj == null)
+					return false;
+				if (getClass() != obj.getClass())
+					return false;
+				UserViewModel other = (UserViewModel) obj;
+				if (user == null) {
+					if (other.user != null)
+						return false;
+				} else if (!user.equals(other.user))
+					return false;
+				return true;
+			}			
+		}
 		
 }

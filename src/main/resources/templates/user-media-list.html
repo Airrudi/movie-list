@@ -32,6 +32,9 @@
 				<button class="button toggleOwned" th:onclick="'toggleOwned(\'' + ${item.key.uuid} + '\');'" th:classappend="${item.value.owned} ? active"></button>
 				<a th:href="${'/media/movies/' + item.key.uuid}" title="Click to view details" class="image cover infoLink" th:style="'background-image:url(/image/' + ${item.key.uuid} + ');'"></a>
 				<button class="button delete" th:onclick="'removeFromJudged(\'' + ${item.key.uuid} + '\');'"></button><!-- TEMP (For testing only)-->
+				<a class="ownedByFriends button" th:href="${'/' + username + '/friends/own/' + item.key.uuid + '/'}" th:classappend="${ownedByFriends.contains(item.key)} ? active"></a>
+				<a class="todoByFriends button" th:href="${'/' + username + '/friends/todo/' + item.key.uuid + '/'}" th:classappend="${todoByFriends.contains(item.key)} ? active"></a>
+				
 				<span class="rating" th:text="${item.value.rating}"></span>				
 			</div>
 		</div>

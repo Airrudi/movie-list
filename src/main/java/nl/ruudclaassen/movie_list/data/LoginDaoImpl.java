@@ -23,4 +23,10 @@ public class LoginDaoImpl implements LoginDao{
 		return (Login) q.getSingleResult();
 	}
 
+	@Override
+	public Login saveLogin(Login login) {
+		em.persist(login);
+		return login;
+	}
+
 }

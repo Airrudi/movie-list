@@ -38,8 +38,7 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private Map<Media, UserMediaStatus> judgedMovies;
 
-	public User() {
-	}
+	public User() {}
 
 	public User(int id, String uuid, String name, String email) {
 		this.id = id;

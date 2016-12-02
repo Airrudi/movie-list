@@ -18,11 +18,21 @@ h1{
 .button.toggleSeen{background-color: blue;} 	
 
 
-#user-media-list .button.delete{top:150px; left:6px;} 
+#user-media-list .button.delete{top:80px; left:6px;} 
 .button.delete{background-color: red;}
+
+.button.ownedByFriends{background-color:orange; opacity:0; top:150px; left:6px;}
+.button.ownedByFriends.active, .button.todoByFriends.active{opacity:1;}
+.button.todoByFriends{background-color:#000; opacity:0; top:80px; right:6px;}
 
 .button{border: none; transition:.2s; cursor:pointer;}
 .button:hover{opacity:.7;}
+
+.user.clickable{transition:.3s;}
+.user.clickable:hover{cursor:pointer; background-color:grey;}
+
+.user.clickable.friend{opacity:.2;}
+.user.clickable.friend{cursor:default; background-color:#fff;}
 
 .mediaBlock .button{	
 	opacity:0;	
@@ -55,6 +65,42 @@ h1{
 	height:75%;	
 	position:absolute;
 	left:50%;
+}
+
+#usersContainer .user{
+	height: 80px;
+    position: relative;
+    border-bottom: 1px solid grey;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+#usersContainer .user:last-child(){border-bottom:none;}
+
+#usersContainer .user .profilePicture{
+	float:left;
+	width: 70px;
+    background-image: url(http://lorempixel.com/400/200/people/1);
+    display: block;
+    height: 100%;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center center;
+    background-repeat:no-repeat;
+    margin-right:18px;
+}
+
+#usersContainer .user p{	
+	margin-bottom:10px;	
+}
+
+#usersContainer .details{display:inline-block;}
+#usersContainer .stats{
+	position:absolute;
+	display:inline-block; 
+	top: 50%;
+	right: 0;
+    transform: translateY(-50%);
 }
 
 #media-detail .imageContainer{height:500px; width:356px; position:relative;}

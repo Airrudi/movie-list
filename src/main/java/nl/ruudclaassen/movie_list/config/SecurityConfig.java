@@ -24,10 +24,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(loginService);
 	}
 
+	/*
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/static/**");
+		// TODO: Q: How to allow multiple pages to be visited by not logged in user?
+		web.ignoring().antMatchers("/static/**","/templates/**");		
 	}
+	*/
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {

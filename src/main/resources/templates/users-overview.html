@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="ISO-8859-1"/>
+		<title th:text="${title}"></title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous"/>
+		<link rel="stylesheet" th:href="@{/style.css}" />
+	</head>
+	<body id="user-list" class="page">
+		<!-- TODO: Create dynamic back button (for all media, not hardcode it for movies) -->
+		<a th:href="${'/' + username + '/movies/'}">Back</a>
+				
+		
+		<form class="logout inline" th:action="@{/logout/}" method="post">
+             <button class="button logout" type="submit">Log out</button>
+        </form>
+	
+		<!-- TODO: Login  -->		
+		<h3 th:inline="text">[[${title}]] (<span id="seenCounter" class="counter" th:inline="text">[[${viewModelFriends.size()}]]</span>)</h3>
+		
+		<div id="filterContainer">
+			<!-- <button id="todoFilter" th:if="!${type.equals('todo')}" class="filter" onclick="filter()">Todo</button> -->						
+		</div>		
+		
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Search all users</button>
+		
+		<!-- Modal -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title" id="myModalLabel">Users</h4>
+		      </div>
+		      <div class="modal-body">
+		        
+		        <div id="usersContainer" class="users">
+					<div th:id="${'user-' + viewModelUser.user.uuid}" class="user clickable" th:classappend="${viewModelFriends.contains(viewModelUser)} ? friend" th:each="viewModelUser,status : ${viewModelUsers}"  th:onclick="'addUserToFriends(\'' + ${viewModelUser.user.uuid} + '\');'">			
+						<span class="profilePicture" th:style="'background-image:url(http://lorempixel.com/400/200/people/' +${status.index} + ');'"></span>
+						
+						<div class="details">
+							<p class="name" th:text="${viewModelUser.user.name}"></p>
+							<p class="rank" th:text="Fanatic"></p>
+						</div>
+						
+						<div class="stats">
+							<span th:inline="text">TODO: [[${viewModelUser.user.todo.size()}]]</span>
+							<span th:inline="text">GEZIEN: [[${viewModelUser.seen.size()}]]</span>
+							<span th:inline="text">EIGENDOM: [[${viewModelUser.owned.size()}]]</span><!-- Wellicht niet tonen ivm privacy? Alleen aangeven of iemand een film heeft als je deze film in je todo lijst hebt staan | 3 vrienden hebben deze film etc. -->
+						</div>
+						
+					</div>
+				</div>
+		        
+		        
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-primary">Save changes</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+		<div id="usersContainer" class="friends">
+			<div class="user" th:each="viewModelFriend,status : ${viewModelFriends}">			
+				<span class="profilePicture" th:style="'background-image:url(http://lorempixel.com/400/200/people/' +${status.index} + ');'"></span>
+				
+				<div class="details">
+					<p class="name" th:text="${viewModelFriend.user.name}"></p>
+					<p class="rank" th:text="Fanatic"></p>
+				</div>
+				
+				<div class="stats">
+					<span th:inline="text">TODO: [[${viewModelFriend.user.todo.size()}]]</span>
+					<span th:inline="text">GEZIEN: [[${viewModelFriend.seen.size()}]]</span>
+					<span th:inline="text">EIGENDOM: [[${viewModelFriend.owned.size()}]]</span><!-- Wellicht niet tonen ivm privacy? Alleen aangeven of iemand een film heeft als je deze film in je todo lijst hebt staan | 3 vrienden hebben deze film etc. -->
+				</div>
+				<button th:onclick="">Remove</button>
+			</div>
+		</div>
+		
+		
+		
+		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+	
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
+		
+		
+		<script>
+			// If currently on todo page and you uncheck the todo circle, the movie should disappear
+			// Same accounts for when you are in owned menu and uncheck owned
+		
+			function filter(){
+				alert("Filters not made yet");
+			}
+			
+			function addUserToFriends(uuid){				
+				
+				var clickedItem = $("#user-" + uuid);
+				
+				// Add friend to friends
+				
+				if(clickedItem.hasClass("friend")){
+					return false;
+				}
+				
+				url = "/friends/" + uuid + "/add";	
+				var data = {};								
+				
+				// Friend class makes sure the user is no longer selectable and is greyed out (in case you are looking for a user who already is your friend..)		
+				clickedItem.addClass("friend");
+				
+				postData(url, data);
+				
+			}
+			
+			function removeFriend(uuid){				
+				
+				var clickedItem = $("#user-" + uuid);				
+				
+				// Remove friend (and add to users popup)
+				
+				url = "/friends/" + uuid + "/delete";	
+				var data = {};								
+				
+				// Friend class makes sure the user is no longer selectable and is greyed out (in case you are looking for a user who already is your friend..)		
+				clickedItem.removeClass("friend");
+				
+				postData(url, data);
+				
+			}
+			
+			function verifyFriendship(){
+				
+			}
+			
+			function postData(url, data = {}){
+				data._csrf = $("input[name='_csrf']").val();
+				
+				$.post( url, data).done(function( responseData ) {
+					console.log( "Data Loaded: " + responseData );
+				});
+			}
+			
+			
+		
+		
+		</script>
+		
+	</body>
+</html>
