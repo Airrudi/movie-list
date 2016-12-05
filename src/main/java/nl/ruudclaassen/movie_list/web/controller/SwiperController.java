@@ -28,8 +28,8 @@ public class SwiperController {
 	public String loadSwiper(
 			@PathVariable String username, 
 			Model model,
-			Principal principal){
-		// TODO: All other media as well (not just movies)
+			Principal principal
+	){	
 		
 		// If visited page does not belong to users', redirect to own page
 		if(!principal.getName().equals(username)){
@@ -37,7 +37,7 @@ public class SwiperController {
 		}
 		
 		User user = userService.getUserByUsername(username);
-		List<Movie> movies = movieService.getFreshMoviesByUser(user);
+		List<Movie> movies = movieService.getFreshMovies(user);
 		
 		model.addAttribute("title", "Swiper");
 		model.addAttribute("user", user);

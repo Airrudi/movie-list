@@ -1,5 +1,7 @@
 package nl.ruudclaassen.movie_list.service;
 
+import java.time.Year;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import nl.ruudclaassen.movie_list.data.MediaDao;
+import nl.ruudclaassen.movie_list.data.MovieDao;
 import nl.ruudclaassen.movie_list.data.UserMediaStatusDao;
-import nl.ruudclaassen.movie_list.model.Media;
-import nl.ruudclaassen.movie_list.model.Media.MediaType;
+import nl.ruudclaassen.movie_list.model.Movie;
 import nl.ruudclaassen.movie_list.model.User;
 import nl.ruudclaassen.movie_list.model.UserMediaStatus;
 
@@ -21,26 +22,27 @@ import nl.ruudclaassen.movie_list.model.UserMediaStatus;
 public class UserMediaServiceImpl implements UserMediaService {
 
 	@Autowired
-	MediaDao mediaDao;
+	MovieService movieService;
+	
+	@Autowired
+	MovieDao movieDao;
 	
 	@Autowired
 	UserService userService;
 	
 	@Autowired
-	MediaService mediaService;
-	
-	@Autowired
 	UserMediaStatusDao userMediaStatusDao;
 	
+	
 	@Override
-	public Map<String, Map<Media,UserMediaStatus>> getSeenAndToSee(User user) {
-		Map<String, Map<Media, UserMediaStatus>> seenAndToSeeMovies = new HashMap<>();
-		Map<Media, UserMediaStatus> itemsSeen = new HashMap<>();
-		Map<Media, UserMediaStatus> itemsToSee = new HashMap<>();
+	public Map<String, Map<String,UserMediaStatus>> getSeenAndToSee(User user) {
+		Map<String, Map<String, UserMediaStatus>> seenAndToSeeMovies = new HashMap<>();
+		Map<String, UserMediaStatus> itemsSeen = new HashMap<>();
+		Map<String, UserMediaStatus> itemsToSee = new HashMap<>();
 		
-		Map<Media, UserMediaStatus> judgedMovies = user.getJudgedMovies();		
+		Map<String, UserMediaStatus> judgedMovies = user.getJudgedMovies();		
 		
-		for(Entry<Media, UserMediaStatus> e : judgedMovies.entrySet()){
+		for(Entry<String, UserMediaStatus> e : judgedMovies.entrySet()){
 			if(e.getValue().isSeen()){
 				itemsSeen.put(e.getKey(), e.getValue());
 			} else {
@@ -55,63 +57,83 @@ public class UserMediaServiceImpl implements UserMediaService {
 	}
 
 	@Override
-	public List<Media> getItemsToSee(User user) {
-		return mediaDao.getItemsToSee(user);
+	public Map<Movie, UserMediaStatus> getTodos(User user) {
+		Set<Movie> movies = user.getTodos();
+		//List<Movie> movies = movieDao.getMovies(movieIds);		
+		
+		return this.enrichMovies(user, movies);
 	}
-
-	@Override
-	public List<Media> getItemsSeen(User user) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	@Transactional
-	public void addToJudged(User user, Media media, Map<String, Boolean> judgeResults, int rating) {
+	
+	// Enrich movies with your data (seen / owned / rating)
+	public Map<Movie, UserMediaStatus> enrichMovies(User user, Set<Movie> movies){
+		Map<Movie, UserMediaStatus> enrichedMovies = new HashMap<>();
+		Map<String, UserMediaStatus> enrichments = user.getJudgedMovies();
 		
-		UserMediaStatus ums = new UserMediaStatus();
-		ums.setOwned(judgeResults.get("owned"));
-		ums.setSeen(judgeResults.get("seen"));
-		ums.setRating(rating);
-		//ums = userMediaStatusDao.save(ums);	
-		
-		// TODO: Q: Create new method that adds a movie to the getjudgedMovies directly?
-		Map<Media, UserMediaStatus> judgedMovies = user.getJudgedMovies();
-		judgedMovies.put(media, ums);		
-
-		if( judgeResults.get("todo") ){
-			Set<Media> todo = user.getTodo();
-			todo.add(media);			
-		}	 
-		
-		userService.saveUser(user);
-	}
-
-	@Override
-	@Transactional
-	public void removeFromJudged(String username, String mediaUUID){
-		User user = userService.getUserByUsername(username);
-		Media media = mediaService.getByUUID(mediaUUID);
-		
-		Map<Media, UserMediaStatus> judgedMedia = user.getJudgedMovies();
-		judgedMedia.remove(media);
-		Set<Media> todoMedia = user.getTodo();		
-
-		if(todoMedia.contains(media)){
-			todoMedia.remove(media);
+		for(Movie movie : movies){			
+			enrichedMovies.put(movie, enrichments.get(movie.getId()));
 		}
 		
-		userService.saveUser(user);
+		return enrichedMovies;
+	}
+
+	@Override
+	public Map<Movie, UserMediaStatus> getItemsSeen(User user) {
+		Map<String, UserMediaStatus> itemsSeen = user.getJudgedMovies();
+		Map<Movie, UserMediaStatus> seen = new HashMap<>();
+		
+		// TODO: Q: What is better, Entry<> or looping through keyset?
+		for(String movieId : itemsSeen.keySet()){
+			if(itemsSeen.get(movieId).isSeen()){
+				seen.put(movieService.getById(movieId), itemsSeen.get(movieId));
+			}
+		}
+		
+		return seen;
 	}
 
 	@Override
 	@Transactional
-	public void toggleSeen(String username, String mediaUUID, boolean seen) {
-		User user = userService.getUserByUsername(username);
-		Media media = mediaService.getByUUID(mediaUUID);
+	public void addToJudged(User user, String mediaId, Map<String, Boolean> judgeResults, int rating) {
+//		Map<Movie, UserMediaStatus> judgedMovies = user.getJudgedMovies();
+//		
+//		UserMediaStatus ums = new UserMediaStatus();
+//		ums.setOwned(judgeResults.get("owned"));
+//		ums.setSeen(judgeResults.get("seen"));
+//		ums.setRating(rating);		
+//		
+//		judgedMovies.put(Movie, ums);		
+//
+//		if( judgeResults.get("todo") ){
+//			Set<Movie> movies = user.getTodos();
+//			todo.add(mediaId);			
+//		}	 
+//		
+//		userService.saveUser(user);
+	}
+
+	@Override
+	@Transactional
+	public void removeFromJudged(String username, String mediaId){
+//		User user = userService.getUserByUsername(username);		
+//		
+//		Map<String, UserMediaStatus> judgedMedia = user.getJudgedMovies();
+//		judgedMedia.remove(mediaId);
+//		Set<String> todoMedia = user.getTodos();		
+//
+//		if( todoMedia.contains(mediaId)){
+//			todoMedia.remove(mediaId);
+//		}
+//		
+//		userService.saveUser(user);
+	}
+
+	@Override
+	@Transactional
+	public void toggleSeen(String username, String movieId, boolean seen) {
+		User user = userService.getUserByUsername(username);		
 		
-		Map<Media, UserMediaStatus> judgedMedia = user.getJudgedMovies();
-		UserMediaStatus usm = judgedMedia.get(media);
+		Map<String, UserMediaStatus> judgedMedia = user.getJudgedMovies();
+		UserMediaStatus usm = judgedMedia.get(movieId);
 		usm.setSeen(seen);
 		
 		userService.saveUser(user);		
@@ -119,12 +141,11 @@ public class UserMediaServiceImpl implements UserMediaService {
 	
 	@Override
 	@Transactional
-	public void toggleOwned(String username, String mediaUUID, boolean owned) {
-		User user = userService.getUserByUsername(username);
-		Media media = mediaService.getByUUID(mediaUUID);
+	public void toggleOwned(String username, String mediaId, boolean owned) {
+		User user = userService.getUserByUsername(username);		
 		
-		Map<Media, UserMediaStatus> judgedMedia = user.getJudgedMovies();
-		UserMediaStatus usm = judgedMedia.get(media);
+		Map<String, UserMediaStatus> judgedMedia = user.getJudgedMovies();
+		UserMediaStatus usm = judgedMedia.get(mediaId);
 		usm.setOwned(owned);
 		
 		userService.saveUser(user);		
@@ -133,30 +154,31 @@ public class UserMediaServiceImpl implements UserMediaService {
 	
 	@Override
 	@Transactional
-	public void toggleTodo(String username, String mediaUUID, boolean todo) {
-		User user = userService.getUserByUsername(username);
-		Media media = mediaService.getByUUID(mediaUUID);
-		
-		Set<Media> mediaTodo = user.getTodo();
-		
-		if(todo){
-			mediaTodo.add(media);
-		} else {
-			mediaTodo.remove(media);
-		}
-		
-		userService.saveUser(user);		
+	public void toggleTodo(String username, String mediaId, boolean todo) {
+//		User user = userService.getUserByUsername(username);		
+//		
+//		// TODO: Q: What if these are not int, but String for imdb / rottentomatoes / etc?
+//		Set<String> mediaTodo = user.getTodos();
+//		
+//		if(todo){
+//			mediaTodo.add(mediaId);
+//		} else {
+//			mediaTodo.remove(mediaId);
+//		}
+//		
+//		userService.saveUser(user);		
 	}
 
 	@Override
-	public Map<Media, UserMediaStatus> getOwned(User user, MediaType mediaType) {
+	public Map<Movie, UserMediaStatus> getOwned(User user) {
 		// TODO: Switch statement for every mediaType?
-		Map<Media, UserMediaStatus> usm = user.getJudgedMovies();
-		Map<Media, UserMediaStatus> owned = new HashMap<>();
+		Map<String, UserMediaStatus> usm = user.getJudgedMovies();
+		Map<Movie, UserMediaStatus> owned = new HashMap<>();
 		
-		for(Entry<Media,UserMediaStatus> e : usm.entrySet()){
+		for(Entry<String,UserMediaStatus> e : usm.entrySet()){
 			if(e.getValue().isOwned()){
-				owned.put(e.getKey(), e.getValue());
+				Movie movie = movieService.getById(e.getKey());
+				owned.put(movie, e.getValue());
 			}
 		}
 		
@@ -164,25 +186,46 @@ public class UserMediaServiceImpl implements UserMediaService {
 	}
 
 	@Override
-	public Map<Media, UserMediaStatus> getTodo(User user, MediaType mediaType) {
-		// TODO: For all other media as well (not just movies)
+	public void addToDone(String movieId) {
+		// TODO Auto-generated method stub
 		
-		Set<Media> todoMedia = user.getTodo();
-		Map<Media, UserMediaStatus> judgedMedia = user.getJudgedMovies();
-		Map<Media, UserMediaStatus> todoMap = new HashMap<>();
+	}
+
+	@Override
+	public void addToSeen(String movieId) {
+		// TODO Auto-generated method stub
 		
+//	}@Override
+//	public Map<Movie, UserMediaStatus> getMoviesPerUser(User user) {
+//		return movieDao.getMoviesPerUser(user);		
+	}
+
+	@Override
+	public List<Movie> getFreshMovies(User user) {
+		// TODO: Q: Check which movies to collect instead of continuously querying the api?
 		
-		for(Media media : todoMedia){
-			
-			if(judgedMedia.get(media) != null){
-				todoMap.put(media, judgedMedia.get(media));
-			}			
+		Map<String, Movie> movies = movieDao.getPopularMovies();
+		Map<String, UserMediaStatus> judgedMovies = user.getJudgedMovies();
+		
+		for(String movieId : judgedMovies.keySet()){
+			movies.remove(movieId);
 		}
 		
-		return todoMap;
-
+		return (List<Movie>) movies.values();
 	}
 	
-	
-	
+	public List<Movie> getMoviesByYear(User user) {
+		// If no settings are set, get default values (if there are any movies left with default filtering)
+		int year = Year.now().getValue();			
+		
+		// TODO: Get best movies of current year (and year before if month < 6)
+		Map<String, Movie> movies = movieDao.getMoviesByYear(year);		
+		Map<String, UserMediaStatus> judgedMovies = user.getJudgedMovies();
+		
+		for(String movieId : judgedMovies.keySet()){
+			movies.remove(movieId);
+		}
+		
+		return (List<Movie>) movies.values();
+	}	
 }

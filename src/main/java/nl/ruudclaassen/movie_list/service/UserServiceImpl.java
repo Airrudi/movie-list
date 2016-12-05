@@ -3,6 +3,7 @@ package nl.ruudclaassen.movie_list.service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -11,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import nl.ruudclaassen.movie_list.data.MovieDao;
 import nl.ruudclaassen.movie_list.data.UserDao;
-import nl.ruudclaassen.movie_list.model.Media;
+import nl.ruudclaassen.movie_list.model.Movie;
 import nl.ruudclaassen.movie_list.model.User;
+import nl.ruudclaassen.movie_list.model.UserMediaStatus;
 import nl.ruudclaassen.movie_list.web.controller.UserController.UserViewModel;
 
 @Service
@@ -21,13 +24,19 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	UserDao userDao;
+	
+	@Autowired
+	MovieDao movieDao;
+	
+	@Autowired
+	UserMediaService userMediaService;
 
-	public void addToDone(Media media) {
+	public void addToDone(Movie movie) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void addToTodo(Media media) {
+	public void addToTodo(Movie movie) {
 		// TODO Auto-generated method stub
 
 	}
@@ -66,12 +75,12 @@ public class UserServiceImpl implements UserService {
 		List<UserViewModel> viewUsers = new ArrayList<>();
 		for(User user : users){
 			
-			Set<Media> seen = user.getJudgedMovies().entrySet().stream()
+			Set<String> seen = user.getJudgedMovies().entrySet().stream()
 					.filter(e -> e.getValue().isSeen())
 					.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()))
 					.keySet();
 			
-			Set<Media> owned = user.getJudgedMovies().entrySet().stream()
+			Set<String> owned = user.getJudgedMovies().entrySet().stream()
 					.filter(e -> e.getValue().isOwned())
 					.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()))
 					.keySet();
@@ -83,37 +92,37 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<User> getFriendOwners(User user, Media media) {
-		List<UserViewModel> friends = this.convertToViewModel(user.getFriends());
-		List<User> friendOwners = new ArrayList<>(); 
+	public List<User> getFriendOwners(User user, Movie movie) {
+//		List<UserViewModel> friends = this.convertToViewModel(user.getFriends());
+//		List<User> friendOwners = new ArrayList<>(); 
+//		
+//		for(UserViewModel friend : friends){			
+//			if(friend.getOwned().contains(movieId)){
+//				friendOwners.add(user);
+//			}
+//		}
 		
-		for(UserViewModel friend : friends){			
-			if(friend.getOwned().contains(media)){
-				friendOwners.add(user);
-			}
-		}
-		
-		return friendOwners;		
+		return null;		
 	}
 
 	@Override
-	public Set<Media> getMediaOwnedByFriends(User user) {
-		List<UserViewModel> friends = this.convertToViewModel(user.getFriends());
-		Set<Media> ownedMedia = new HashSet<>(); 
+	public Map<Movie, UserMediaStatus> getOwnedByFriends(User user) {
+//		List<UserViewModel> friends = this.convertToViewModel(user.getFriends());
+//		Set<Integer> owned = new HashSet<>(); 
+//		
+//		for(UserViewModel friend : friends){
+//			owned.addAll(friend.getOwned());
+//		}		
 		
-		for(UserViewModel friend : friends){
-			ownedMedia.addAll(friend.getOwned());
-		}		
-		
-		return ownedMedia;		
+		return null;		
 	}
 
 	@Override
-	public Set<User> getFriendsWithSameTodo(User user, Media media) {
+	public Set<User> getFriendsWithSameTodo(User user, String movieId) {
 		Set<User> friendsWithSameTodo = new HashSet<>();
 		
 		for(User friend : user.getFriends()){
-			if(friend.getTodo().contains(media)){
+			if(friend.getTodos().contains(movieId)){
 				friendsWithSameTodo.add(friend);
 			}
 		}
@@ -122,14 +131,18 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Set<Media> getAllFriendTodos(User user) {
-		Set<Media> friendTodos = new HashSet<>();
+	public Map<Movie, UserMediaStatus> getAllFriendTodos(User user) {
+//		Set<String> friendTodos = new HashSet<>();
+//		
+//		for(User friend : user.getFriends()){
+//			friendTodos.addAll(friend.getTodos());			
+//		}
+//		
+//		List<Movie> movies = movieDao.getMovies(friendTodos);
+//		
+//		return userMediaService.enrichMovies(user, movies);
 		
-		for(User friend : user.getFriends()){
-			friendTodos.addAll(friend.getTodo());			
-		}
-
-		return friendTodos;
+		return null;
 	}
 
 	@Override
@@ -142,6 +155,18 @@ public class UserServiceImpl implements UserService {
 	public void addUserToFriends(User user, User friend) {
 		user.getFriends().add(friend);		
 		this.saveUser(user);
+	}
+
+	@Override
+	public void addToDone(String movieId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addToTodo(String movieId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

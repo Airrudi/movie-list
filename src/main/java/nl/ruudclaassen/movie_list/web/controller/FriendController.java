@@ -13,12 +13,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import nl.ruudclaassen.movie_list.general.Constants;
-import nl.ruudclaassen.movie_list.model.Media;
+import nl.ruudclaassen.movie_list.model.Movie;
 import nl.ruudclaassen.movie_list.model.User;
-import nl.ruudclaassen.movie_list.service.MediaService;
+import nl.ruudclaassen.movie_list.service.MovieService;
 import nl.ruudclaassen.movie_list.service.UserService;
 import nl.ruudclaassen.movie_list.web.controller.UserController.UserViewModel;
 
@@ -29,7 +28,7 @@ public class FriendController {
 	UserService userService;
 	
 	@Autowired
-	MediaService mediaService;
+	MovieService movieService;
 	
 	@RequestMapping("{username}/friends/")
 	public String showUsers(Model model, @PathVariable String username){
@@ -46,15 +45,15 @@ public class FriendController {
 		return Constants.USERS;
 	}
 	
-	@RequestMapping("{username}/friends/own/{mediaUUID}")
-	public String showOwnedByFriends(Model model, @PathVariable String mediaUUID, @PathVariable String username){		
+	@RequestMapping("{username}/friends/own/{movieId}")
+	public String showOwnedByFriends(Model model, @PathVariable String movieId, @PathVariable String username){		
 		User user  = userService.getUserByUsername(username);
 		
-		Media media = mediaService.getByUUID(mediaUUID);
-		List<User> friendOwners = userService.getFriendOwners(user, media);
+		Movie movie = movieService.getById(movieId);
+		List<User> friendOwners = userService.getFriendOwners(user, movie);
 		
 		model.addAttribute("title","Owned by friends");
-		model.addAttribute("media", media);
+		model.addAttribute("media", movie);
 		//model.addAttribute("filters", filters);
 		model.addAttribute("friendOwners", friendOwners);
 		
@@ -63,17 +62,17 @@ public class FriendController {
 	
 	// TODO: Friends, needs to be verified 2 ways to enable friendship (not just randomly adding people)
 	// TODO: Show all todo's
-	@RequestMapping("{username}/friends/todo/{mediaUUID}")
-	public String showFriendsWithSameTodo(Model model, @PathVariable String mediaUUID, @PathVariable String username){		
-		User user = userService.getUserByUsername(username);		
-		Media media = mediaService.getByUUID(mediaUUID);
-		Set<User> friendWithSameTodo = userService.getFriendsWithSameTodo(user, media);
-		
-		model.addAttribute("title","Shared todo's");
-		model.addAttribute("media", media);
-		//model.addAttribute("filters", filters);
-		model.addAttribute("friendWithSameTodo", friendWithSameTodo);
-		
+	@RequestMapping("{username}/friends/todo/{movieId}")
+	public String showFriendsWithSameTodo(Model model, @PathVariable String movieId, @PathVariable String username){		
+//		User user = userService.getUserByUsername(username);		
+//		Movie movie = movieService.getById(movieId);
+//		Set<User> friendWithSameTodo = userService.getFriendsWithSameTodo(user, movie);
+//		
+//		model.addAttribute("title","Shared todo's");
+//		model.addAttribute("media", movie);
+//		//model.addAttribute("filters", filters);
+//		model.addAttribute("friendWithSameTodo", friendWithSameTodo);
+//		
 		return Constants.USERS;
 	}
 	

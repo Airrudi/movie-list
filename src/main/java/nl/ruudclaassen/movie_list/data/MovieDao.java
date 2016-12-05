@@ -1,23 +1,16 @@
 package nl.ruudclaassen.movie_list.data;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import nl.ruudclaassen.movie_list.model.Genre;
 import nl.ruudclaassen.movie_list.model.Movie;
-import nl.ruudclaassen.movie_list.model.User;
 
 public interface MovieDao {
-	List<Movie> getMovies();
-
-	Movie getMovieByUUID(String uuid);
+	Movie getMovieById(String movieId);	 
+	List<Movie> getMovies(Set<String> movies);
 	
-	Movie saveMovie(Movie movie);
-	Movie updateMovie(Movie movie);
-
-	List<Movie> getMoviesPerUser(User user);
-	List<Movie> getFreshMoviesByUser(User user);
-	List<Movie> getJudgedMoviesByUser(User user);
-
-	List<Movie> getMoviesPerGenre(Genre genre);
+	Map<String, Movie> getMoviesByYear(int year);
+	Map<String, Movie> getPopularMovies();
 	
 }

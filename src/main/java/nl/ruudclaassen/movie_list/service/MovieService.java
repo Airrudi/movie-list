@@ -1,23 +1,20 @@
 package nl.ruudclaassen.movie_list.service;
 
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.web.multipart.MultipartFile;
-
-import nl.ruudclaassen.movie_list.model.Genre;
 import nl.ruudclaassen.movie_list.model.Movie;
 import nl.ruudclaassen.movie_list.model.User;
+import nl.ruudclaassen.movie_list.model.UserMediaStatus;
 
 public interface MovieService {
+	Movie getById(String movieId);
+	List<Movie> getFreshMovies(User user);
+	
 	List<Movie> getMovies();
+	List<Movie> getMoviesPerGenre(String genreId);
 	
-	Movie saveMovie(Movie movie, byte[] image);
-
-	Movie getMovieByUUID(String uuid);
-
-	List<Movie> getMoviesPerUser(User user);
-
-	List<Movie> getMoviesPerGenre(Genre genre);
 	
-	List<Movie> getFreshMoviesByUser(User user);
+	Map<Movie, UserMediaStatus> getMoviesPerUser(User user);	
+	Map<Movie, UserMediaStatus> getTodos(User user);
 }

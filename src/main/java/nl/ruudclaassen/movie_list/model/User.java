@@ -9,7 +9,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import javax.print.attribute.standard.Media;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -24,19 +27,15 @@ public class User {
 	private String uuid;
 	private String name;
 	private String email;
-
-	// TODO: Lookup what internally a map is
-	// @ManyToMany
-	// Map<Movie, UserMovieStatus> movieStatusses;
-
-	@OneToMany(orphanRemoval = true)
-	private Set<Media> todo;
+	
+	@Transient
+	private Set<Movie> todos;
 
 	@OneToMany
 	private List<User> friends;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	private Map<Media, UserMediaStatus> judgedMovies;
+	private Map<String, UserMediaStatus> judgedMovies;
 
 	public User() {}
 
@@ -79,12 +78,12 @@ public class User {
 		this.email = email;
 	}
 
-	public Set<Media> getTodo() {
-		return todo;
+	public Set<Movie> getTodos() {
+		return todos;
 	}
 
-	public void setTodo(Set<Media> todo) {
-		this.todo = todo;
+	public void setTodos(Set<Movie> todos) {
+		this.todos = todos;
 	}
 
 	public List<User> getFriends() {
@@ -95,11 +94,11 @@ public class User {
 		this.friends = friends;
 	}
 
-	public Map<Media, UserMediaStatus> getJudgedMovies() {
+	public Map<String, UserMediaStatus> getJudgedMovies() {
 		return judgedMovies;
 	}
 
-	public void setJudgedMovies(Map<Media, UserMediaStatus> judgedMovies) {
+	public void setJudgedMovies(Map<String, UserMediaStatus> judgedMovies) {
 		this.judgedMovies = judgedMovies;
 	}
 
@@ -127,5 +126,4 @@ public class User {
 			return false;
 		return true;
 	}
-
 }

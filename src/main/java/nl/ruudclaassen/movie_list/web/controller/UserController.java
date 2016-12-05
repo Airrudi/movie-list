@@ -1,8 +1,6 @@
 package nl.ruudclaassen.movie_list.web.controller;
 
 import java.security.Principal;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,13 +16,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import nl.ruudclaassen.movie_list.general.Constants;
-import nl.ruudclaassen.movie_list.model.Media;
-import nl.ruudclaassen.movie_list.model.Media.MediaType;
+import nl.ruudclaassen.movie_list.model.Movie;
 import nl.ruudclaassen.movie_list.model.User;
 import nl.ruudclaassen.movie_list.model.UserMediaStatus;
 import nl.ruudclaassen.movie_list.service.UserMediaService;
 import nl.ruudclaassen.movie_list.service.UserService;
-import java.util.stream.Collectors;
 
 
 @Controller
@@ -61,72 +57,72 @@ public class UserController {
 	}
 	
 	@RequestMapping("/{username}/{type}/todo/")
-	public String show(Model model, @PathVariable String username, MediaType type) { // @PathVariable TODO: FIX Pathvariable conversion		
+	public String show(Model model, @PathVariable String username) { // @PathVariable TODO: FIX Pathvariable conversion		
 		User user = userService.getUserByUsername(username);
-		Map<Media, UserMediaStatus> todo = userMediaService.getTodo(user, type);
-		Set<Media> ownedByFriends = userService.getMediaOwnedByFriends(user);
-		Set<Media> todoByFriends = userService.getAllFriendTodos(user);
+		Map<Movie, UserMediaStatus> todos = userMediaService.getTodos(user);
+		Map<Movie, UserMediaStatus> ownedByFriends = userService.getOwnedByFriends(user);
+		Map<Movie, UserMediaStatus> todoByFriends = userService.getAllFriendTodos(user);
 		
 		model.addAttribute("ownedByFriends",ownedByFriends);
 		model.addAttribute("todoByFriends",todoByFriends);	
-		model.addAttribute("title", "Todo");
-		model.addAttribute("type", "todo");
-		model.addAttribute("media", todo);
-		model.addAttribute("todoList", user.getTodo());
+		model.addAttribute("title", "Todo's");
+		model.addAttribute("type", "todos");
+		model.addAttribute("media", todos);
+		model.addAttribute("todoList", user.getTodos());
 		model.addAttribute("username", username);
 		
 		return Constants.USER_MEDIA;
 	}
 	
 	@RequestMapping("/{username}/{type}/seen/")
-	public String showSeen(Model model, @PathVariable String username, MediaType type) {// TODO: Enum		
+	public String showSeen(Model model, @PathVariable String username) {// TODO: Enum		
 		User user = userService.getUserByUsername(username);
 		
-		Map<String, Map<Media, UserMediaStatus>> seenAndToSee = userMediaService.getSeenAndToSee(user);
-		Map<Media, UserMediaStatus> itemsSeen = seenAndToSee.get("seen");
+		Map<String, Map<String, UserMediaStatus>> seenAndToSee = userMediaService.getSeenAndToSee(user);
+		Map<String, UserMediaStatus> itemsSeen = seenAndToSee.get("seen");
 		
-		Set<Media> ownedByFriends = userService.getMediaOwnedByFriends(user);		
+		Map<Movie, UserMediaStatus> ownedByFriends = userService.getOwnedByFriends(user);		
 		model.addAttribute("ownedByFriends",ownedByFriends);
 		
 		model.addAttribute("title", "Seen");
 		model.addAttribute("type", "seen");
 		model.addAttribute("media", itemsSeen);
-		model.addAttribute("todoList", user.getTodo());
+		model.addAttribute("todoList", user.getTodos());
 		model.addAttribute("username", username);
 		
 		return Constants.USER_MEDIA;
 	}
 	
 	@RequestMapping("/{username}/{type}/notseen/")
-	public String showNotSeen(Model model, @PathVariable String username, MediaType type) {// TODO: Enum
+	public String showNotSeen(Model model, @PathVariable String username) {// TODO: Enum
 		User user = userService.getUserByUsername(username);
 		
-		Map<String, Map<Media, UserMediaStatus>> seenAndToSee = userMediaService.getSeenAndToSee(user);
-		Map<Media, UserMediaStatus> notSeen = seenAndToSee.get("toSee");
+		Map<String, Map<String, UserMediaStatus>> seenAndToSee = userMediaService.getSeenAndToSee(user);
+		Map<String, UserMediaStatus> notSeen = seenAndToSee.get("toSee");
 		
-		Set<Media> ownedByFriends = userService.getMediaOwnedByFriends(user);		
+		Map<Movie, UserMediaStatus> ownedByFriends = userService.getOwnedByFriends(user);		
 		model.addAttribute("ownedByFriends",ownedByFriends);
 		
 		model.addAttribute("title", "Not seen");
 		model.addAttribute("type", "notseen");
 		model.addAttribute("media", notSeen);
-		model.addAttribute("todoList", user.getTodo());
+		model.addAttribute("todoList", user.getTodos());
 		model.addAttribute("username", username);
 		
 		return Constants.USER_MEDIA;
 	}
 	
 	@RequestMapping("/{username}/{type}/owned/")
-	public String showOwned(Model model, @PathVariable String username, MediaType type) { // TODO Enum		
+	public String showOwned(Model model, @PathVariable String username) {		
 		User user = userService.getUserByUsername(username);
-		Map<Media, UserMediaStatus> ownedMedia = userMediaService.getOwned(user, type);
+		Map<Movie, UserMediaStatus> ownedMedia = userMediaService.getOwned(user);
 		
-		Set<Media> ownedByFriends = userService.getMediaOwnedByFriends(user);		
+		Map<Movie, UserMediaStatus> ownedByFriends = userService.getOwnedByFriends(user);		
 		model.addAttribute("ownedByFriends",ownedByFriends);
 		
 		model.addAttribute("title", "Owned");
 		model.addAttribute("type", "owned");
-		model.addAttribute("todoList", user.getTodo());
+		model.addAttribute("todoList", user.getTodos());
 		model.addAttribute("media", ownedMedia);
 		model.addAttribute("username", username);
 		
@@ -206,34 +202,15 @@ public class UserController {
 	    return new ResponseEntity<Boolean>(headers, HttpStatus.OK);
 	}
 	
-	// Backup seen vs notseen
-		/*@RequestMapping("/{username}/movies/")
-		public String showOverview(Model model, Principal principal) {
-			String username = principal.getName();
-			System.out.print(principal);
-			
-			User user = userService.getUserByUsername(username);
-			
-			Map<String, Map<Media, UserMediaStatus>> seenAndToSee = userMediaService.getSeenAndToSee(user); 
-			
-			Map<Media, UserMediaStatus> itemsSeen = seenAndToSee.get("seen");
-			Map<Media, UserMediaStatus> itemsToSee = seenAndToSee.get("toSee");		
-			
-			model.addAttribute("itemsSeen", itemsSeen);
-			model.addAttribute("itemsToSee", itemsToSee);
-			model.addAttribute("todoList", user.getTodo());
-			model.addAttribute("username", username);
-			
-			return Constants.USER_MEDIA;
-		}*/
+	
 	
 		public static class UserViewModel{
 			
 			private final User user;
-			private final Set<Media> owned;
-			private final Set<Media> seen;
+			private final Set<String> owned;
+			private final Set<String> seen;
 			
-			public UserViewModel(User user, Set<Media> seen, Set<Media> owned) {				
+			public UserViewModel(User user, Set<String> seen, Set<String> owned) {				
 				this.user = user;
 				this.owned = owned;
 				this.seen = seen;
@@ -243,11 +220,11 @@ public class UserController {
 				return user;
 			}
 			
-			public Set<Media> getOwned() {
+			public Set<String> getOwned() {
 				return owned;
 			}
 			
-			public Set<Media> getSeen() {
+			public Set<String> getSeen() {
 				return seen;
 			}
 
