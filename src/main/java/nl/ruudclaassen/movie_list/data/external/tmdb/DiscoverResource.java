@@ -7,14 +7,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.springframework.stereotype.Component;
+import org.apache.cxf.annotations.Logging;
 
 import nl.ruudclaassen.movie_list.model.external.tmdb.MovieDb;
+import nl.ruudclaassen.movie_list.model.external.tmdb.core.ResultsPage;
+import nl.ruudclaassen.movie_list.model.external.tmdb.keywords.KeywordMovie;
 
 
-@Component
+//@Component
 @Path("/discover/movie")
 @Produces("application/json")
+@Logging
 public interface DiscoverResource {
 	
 	@GET    
@@ -24,9 +27,10 @@ public interface DiscoverResource {
     		@QueryParam("primary_release_year") int year
     );
 	
-	@GET
-    @Path("sort_by=popularity.desc&api_key=fa676cb99b28e7fcae03a052c3ddcd0c&primary_release_year={year}")
+	@GET    
     @Produces("application/json")
-    public List<MovieDb> getPopularMovies();
-	
+    public ResultsPage<KeywordMovie> getPopularMovies(
+    		@QueryParam("api_key") String api_key,
+    		@QueryParam("sort_by") String sortBy    		
+    );	
 }

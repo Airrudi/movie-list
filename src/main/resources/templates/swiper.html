@@ -13,12 +13,12 @@
 	<div id="swiperContainer">
 		<div id="tinderslide">
 		    <ul>
-	        	<li th:each="item : ${media}" class="item" th:attr="data-uuid=${item.uuid}">
+	        	<li th:each="item : ${movies}" class="item" th:attr="data-id=${item.id}">
 	        		<!-- TEMP, title will go away if images are used -->	        		
-					<div th:id="${'item-' + item.uuid}" class="imageContainer">
+					<div th:id="${'item-' + item.id}" class="imageContainer">
 						<button class="button toggleTodo"></button>
 						<button class="button toggleOwned"></button>
-						<span class="image" th:style="'background-image:url(/image/' + ${item.uuid} + ');'"></span>
+						<span class="image" th:style="'background-image:url(https://image.tmdb.org/t/p/w342/' + ${item.imageUrl} + ');'"></span>
 					</div>
 					
 					
@@ -31,7 +31,7 @@
 		  	<div id="beam"></div>
 		  </div>
 		  
-		  <p th:if="${media.size() == 0}">Die-hard! Je hebt alle media beoordeeld. Je kunt deze bekijken en aanpassen in je <a th:href="${'/' + username + '/movies/'}">media overzicht</a>.</p>
+		  <p th:if="${movies.size() == 0}">Die-hard! Je hebt alle media beoordeeld. Je kunt deze bekijken en aanpassen in je <a th:href="${'/' + username + '/movies/'}">media overzicht</a>.</p>
 	
 	</div>
 	
@@ -90,7 +90,7 @@
 		
 		
 		function judgeSeen(item, seen){			
-			var mediaId = item.data("uuid");
+			var mediaId = item.data("id");
 			var owned = item.find(".toggleOwned").hasClass("active");
 			var todo = item.find(".toggleTodo").hasClass("active");
 			var url = "/" + username + "/media/" + mediaId;

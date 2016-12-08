@@ -62,7 +62,9 @@ h1{
 
 #swiperContainer{
 	width:56%;
+	min-width:332px;
 	height:75%;	
+	min-height:558px;
 	position:absolute;
 	left:50%;
 }

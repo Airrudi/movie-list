@@ -2,6 +2,7 @@ package nl.ruudclaassen.movie_list.web.controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,11 +38,11 @@ public class SwiperController {
 		}
 		
 		User user = userService.getUserByUsername(username);
-		List<Movie> movies = movieService.getFreshMovies(user);
+		Map<String, Movie> movies = movieService.getFreshMovies(user);
 		
 		model.addAttribute("title", "Swiper");
 		model.addAttribute("user", user);
-		model.addAttribute("media", movies);
+		model.addAttribute("movies", movies.values());
 		
 		return Constants.SWIPER;
 	}

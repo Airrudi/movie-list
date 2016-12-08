@@ -38,9 +38,9 @@ public class MovieServiceImpl implements MovieService{
 	}
 
 	@Override
-	public List<Movie> getFreshMovies(User user) {
+	public Map<String, Movie> getFreshMovies(User user) {
 		// TODO Auto-generated method stub
-		return null;
+		return movieDao.getPopularMovies();
 	}
 
 	@Override

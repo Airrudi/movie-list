@@ -9,7 +9,7 @@ import nl.ruudclaassen.movie_list.model.UserMediaStatus;
 
 public interface MovieService {
 	Movie getById(String movieId);
-	List<Movie> getFreshMovies(User user);
+	Map<String, Movie> getFreshMovies(User user);
 	
 	List<Movie> getMovies();
 	List<Movie> getMoviesPerGenre(String genreId);

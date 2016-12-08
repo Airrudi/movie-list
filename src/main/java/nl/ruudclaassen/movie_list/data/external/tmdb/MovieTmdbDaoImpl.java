@@ -8,11 +8,14 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
 
 import nl.ruudclaassen.movie_list.data.MovieDao;
 import nl.ruudclaassen.movie_list.model.Movie;
 import nl.ruudclaassen.movie_list.model.external.tmdb.MovieDb;
+import nl.ruudclaassen.movie_list.model.external.tmdb.core.ResultsPage;
+import nl.ruudclaassen.movie_list.model.external.tmdb.keywords.KeywordMovie;
 
 
 @Repository
@@ -22,10 +25,13 @@ public class MovieTmdbDaoImpl implements MovieDao {
 	private String apiKey;
 	
 	@Autowired
+	private DiscoverResource discoverResource;
+	
+	//@Autowired
 	private MovieResource movieResource;
 	
 	@Autowired
-	private DiscoverResource discoverResource;
+	private ApplicationContext applicationContext;
 
 	@Override
 	public Movie getMovieById(String movieId) {		
@@ -36,15 +42,16 @@ public class MovieTmdbDaoImpl implements MovieDao {
 	
 	@Override
 	public Map<String, Movie> getMoviesByYear(int year) {
-		List<MovieDb> dbMovies = discoverResource.getMoviesByYear(apiKey, "popularity.desc", year);
-		Map<String, Movie> movies = movieConverter(dbMovies);
-		
-		return movies;		
+//		ResultsPage<List<KeywordMovie>> dbMovies = discoverResource.getMoviesByYear(apiKey, "popularity.desc", year);
+//		Map<String, Movie> movies = movieConverter(dbMovies);
+//		
+//		return movies;		
+		return null;
 	}
 	
 	@Override
 	public Map<String, Movie> getPopularMovies() {
-		List<MovieDb> dbMovies = discoverResource.getPopularMovies();
+		List<KeywordMovie> dbMovies = discoverResource.getPopularMovies(apiKey,"popularity.desc").getResults();
 		Map<String, Movie> movies = movieConverter(dbMovies);
 		
 		return movies;		
@@ -60,10 +67,10 @@ public class MovieTmdbDaoImpl implements MovieDao {
 		return movie;
 	}
 	
-	private Map<String, Movie> movieConverter(List<MovieDb> movies){
+	private Map<String, Movie> movieConverter(List<KeywordMovie> movies){
 		Map<String, Movie> convertedMovies = new HashMap<>();
-		
-		for(MovieDb movieDb : movies){
+			
+		for(KeywordMovie movieDb: movies){
 			Movie movie = new Movie();
 			movie.setId(Integer.toString(movieDb.getId()));
 			movie.setTitle(movieDb.getTitle());
@@ -72,6 +79,7 @@ public class MovieTmdbDaoImpl implements MovieDao {
 			
 			convertedMovies.put(movie.getId(), movie);
 		}
+		
 		
 		return convertedMovies;
 	}
